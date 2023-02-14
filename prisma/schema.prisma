@@ -187,6 +187,8 @@ model AgencyCity {
   agencyId Int
   City     City   @relation(fields: [cityId], references: [id])
   Agency   Agency @relation(fields: [agencyId], references: [id])
+
+  @@map("agency_cities")
 }
 
 model RealtorLanguage {
@@ -206,4 +208,6 @@ model AgencyLanguage {
   languageId Int
   Lenguage   Language @relation(fields: [languageId], references: [id])
   Agency     Agency   @relation(fields: [agencyId], references: [id])
+
+  @@map("agency_languages")
 }
