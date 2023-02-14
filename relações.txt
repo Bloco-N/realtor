@@ -1,0 +1,25 @@
+CLIENTE
+	
+CORRETOR
+	Agência []
+	Premio []
+AGÊNCIA
+	Imóveis []
+
+IMÓVEIS
+	LINK
+
+COMENTÁRIOS
+	CLIENTE
+	CORRETOR
+VENDAS
+	CLIENTE
+	CORRETOR
+
+PARCERIA
+	CORRETOR
+	AGENCIA
+
+PREMIOS
+	title
+	description
