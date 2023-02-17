@@ -10,9 +10,30 @@ export class RealtorRepository implements IRealtorRepository {
   prisma = new PrismaClient()
   mapper = new RealtorMapper()
 
-  public async findAll(): Promise<RealtorResponse[]> {
-
-    const realtors = await this.prisma.realtor.findMany()
+  public async findAll(search: string, page: number, offset: number): Promise<RealtorResponse[]> {
+    let take = 10
+    let skip = 0
+    if (offset) take = offset
+    if (page) skip = take * page - 1
+    if (search) {
+      const realtors = await this.prisma.realtor.findMany({
+        skip,
+        take,
+        where: {
+          OR: {
+            firstName: {
+              contains: search
+            },
+            lastName: {
+              contains: search
+            }
+          }
+        }
+      })
+      const realtorsResponse = this.mapper.RealtorListToRealtorResponseList(realtors)
+      return realtorsResponse
+    }
+    const realtors = await this.prisma.realtor.findMany({ skip, take })
     const realtorsResponse = this.mapper.RealtorListToRealtorResponseList(realtors)
     return realtorsResponse
 
