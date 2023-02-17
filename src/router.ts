@@ -1,5 +1,5 @@
-import { Router } from 'express'
 import { RealtorController } from './controllers/RealtorController'
+import { Router }            from 'express'
 
 const router = Router()
 const realtorController = new RealtorController()
