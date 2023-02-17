@@ -8,8 +8,8 @@ export class RealtorController {
 
   private repository = new RealtorRepository()
 
-  public async listAll(req: Request<{}, {}, {}, ListAllRealtorsQuery>, res: Response) {
-
+  public async listAll(req: Request<unknown, unknown, unknown, ListAllRealtorsQuery>, res: Response) {
+    
     const {
       query: { search, page, offset }
     } = req
@@ -18,7 +18,7 @@ export class RealtorController {
   
   }
 
-  public async add(req: Request<{}, {}, CreateRealtorRequest>, res: Response) {
+  public async add(req: Request<unknown, unknown, CreateRealtorRequest>, res: Response) {
 
     const { body } = req
     const created = await this.repository.add(body)
@@ -26,7 +26,7 @@ export class RealtorController {
   
   }
 
-  public async update(req: Request<{}, {}, UpdateRealtorRequest>, res: Response) {
+  public async update(req: Request<unknown, unknown, UpdateRealtorRequest>, res: Response) {
 
     const { body } = req
     const updated = await this.repository.update(body)
