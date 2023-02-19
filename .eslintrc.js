@@ -15,7 +15,7 @@ module.exports = {
   root: true,
   rules: {
     'no-multi-spaces': ['error', { exceptions: { ImportDeclaration: true } }],
-    'no-multiple-empty-lines': ["error", {max:1}],
+    'no-multiple-empty-lines': ['error', { max: 1 }],
     'function-paren-newline': ['error', 'never'],
     'function-call-argument-newline': ['error', 'never'],
     'padded-blocks': ['error', 'always', { allowSingleLineBlocks: true }],
