@@ -1,16 +1,19 @@
 import { CreateRealtorRequest } from '../dtos/requests/CreateRealtorRequest'
 import { ListAllRealtorsQuery } from '../dtos/requests/ListAllRealtorsQuery'
 import { UpdateRealtorRequest } from '../dtos/requests/UpdateRealtorRequest'
+import { ApiError }             from '../errors/ApiError'
 import { RealtorRepository }    from '../repositories/RealtorRepository'
 import { Request, Response }    from 'express'
-import { ApiError }             from '../errors/ApiError'
+import { validationResult }     from 'express-validator'
 
 export class RealtorController {
 
   private repository = new RealtorRepository()
 
   public async listAll(req: Request<unknown, unknown, unknown, ListAllRealtorsQuery>, res: Response) {
-    
+
+    const errors = validationResult(req)
+
     const {
       query: { search, page, offset }
     } = req
@@ -19,7 +22,7 @@ export class RealtorController {
   
   }
 
-  public async get(req: Request<{id:number}>, res:Response){
+  public async get(req: Request<{ id: number }>, res: Response) {
 
     try {
 
@@ -27,10 +30,10 @@ export class RealtorController {
       const realtor = await this.repository.get(id)
 
       res.status(200).send(realtor)
-      
+    
     } catch (error) {
-      
-      if(error instanceof ApiError){
+
+      if (error instanceof ApiError) {
 
         res.status(error.status).send(error.message)
       
