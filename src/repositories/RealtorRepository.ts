@@ -4,6 +4,7 @@ import { RealtorResponse }      from '../dtos/responses/RealtorResponse'
 import { RealtorMapper }        from '../mappers/RealtorMapper'
 import { IRealtorRepository }   from './IRealtorRepository'
 import { PrismaClient }         from '@prisma/client'
+import { ApiError }             from '../errors/ApiError'
 
 export class RealtorRepository implements IRealtorRepository {
 
@@ -42,12 +43,12 @@ export class RealtorRepository implements IRealtorRepository {
   
   }
 
-  public async get(id: number): Promise<RealtorResponse | Error> {
+  public async get(id: number): Promise<RealtorResponse> {
 
     const realtor = await this.prisma.realtor.findUnique({ where: { id } })
     if(!realtor){
 
-      return Error('realtor not found')
+      throw new ApiError(404, 'realtor not found')
     
     }
     const realtorResponse = this.mapper.RealtorToRealtorResponse(realtor)

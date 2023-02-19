@@ -3,6 +3,7 @@ import { ListAllRealtorsQuery } from '../dtos/requests/ListAllRealtorsQuery'
 import { UpdateRealtorRequest } from '../dtos/requests/UpdateRealtorRequest'
 import { RealtorRepository }    from '../repositories/RealtorRepository'
 import { Request, Response }    from 'express'
+import { ApiError }             from '../errors/ApiError'
 
 export class RealtorController {
 
@@ -15,6 +16,27 @@ export class RealtorController {
     } = req
     const realtors = await this.repository.findAll(search, page, offset)
     res.status(200).send(realtors)
+  
+  }
+
+  public async get(req: Request<{id:number}>, res:Response){
+
+    try {
+
+      const { id } = req.params
+      const realtor = await this.repository.get(id)
+
+      res.status(200).send(realtor)
+      
+    } catch (error) {
+      
+      if(error instanceof ApiError){
+
+        res.status(error.status).send(error.message)
+      
+      }
+    
+    }
   
   }
 
