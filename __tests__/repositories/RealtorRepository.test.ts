@@ -1,4 +1,5 @@
 import { RealtorResponse }   from "../../src/dtos/responses/RealtorResponse"
+import { ApiError }          from "../../src/errors/ApiError"
 import { RealtorRepository } from "../../src/repositories/RealtorRepository"
 
 const realtorRepository = new RealtorRepository()
@@ -161,10 +162,17 @@ describe('RealtorRepository unit tests', () => {
     expect(deleted).toBeDefined()
     expect(deleted).toBe('deleted')
 
-    const notFoundError = await realtorRepository.get(14) as Error
+    try {
+      
+      await realtorRepository.get(14)
+      
+    } catch (error) {
+      
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error.status).toBe(404)
+      expect(error.message).toBe('realtor not found')
     
-    expect(notFoundError).toBeInstanceOf(Error)
-    expect(notFoundError.message).toBe('realtor not found')
+    }
 
   })
 
