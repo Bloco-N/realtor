@@ -4,7 +4,7 @@ import { RealtorResponse }      from '../dtos/responses/RealtorResponse'
 
 export interface IRealtorRepository {
   findAll: (search: string, page: number, offset: number) => Promise<RealtorResponse[]>
-  get: (id: number) => Promise<RealtorResponse | Error>
+  get: (id: number) => Promise<RealtorResponse>
   add: (data: CreateRealtorRequest) => Promise<string>
   update: (data: UpdateRealtorRequest) => Promise<string>
   remove: (id: number) => Promise<string>
