@@ -15,7 +15,7 @@ export class RealtorRepository implements IRealtorRepository {
     let take = 10
     let skip = 0
     if (offset) take = offset
-    if (page) skip = take * page - 1
+    if (page) skip = take * (page - 1)
     if (search) {
 
       const realtors = await this.prisma.realtor.findMany({
@@ -42,9 +42,14 @@ export class RealtorRepository implements IRealtorRepository {
   
   }
 
-  public async get(id: number): Promise<RealtorResponse> {
+  public async get(id: number): Promise<RealtorResponse | Error> {
 
     const realtor = await this.prisma.realtor.findUnique({ where: { id } })
+    if(!realtor){
+
+      return Error('realtor not found')
+    
+    }
     const realtorResponse = this.mapper.RealtorToRealtorResponse(realtor)
     return realtorResponse
   

@@ -12,7 +12,7 @@
     "prisma:seed": "npx prisma db seed",
     "prisma:studio": "npx prisma studio",
 
-    "test": "dotenv -e .env.test jest -i --verbose ./__tests__",
+    "test": "dotenv -e .env.test -- jest -i --verbose ./__tests__",
     "prisma:create:test": "dotenv -e .env.test -- npx prisma migrate dev --name",
     "prisma:run:test": "dotenv -e .env.test -- npx prisma migrate dev",
     "prisma:reset:test": "dotenv -e .env.test -- npx prisma migrate reset",
