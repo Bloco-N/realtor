@@ -1,5 +1,6 @@
-import { RealtorResponse } from '../dtos/responses/RealtorResponse'
-import { Realtor }         from '@prisma/client'
+import { RealtorResponse }    from '../dtos/responses/RealtorResponse'
+import { Realtor }            from '@prisma/client'
+import { PaginationResponse } from '../dtos/responses/PaginationResponse'
 
 export class RealtorMapper {
 
@@ -20,6 +21,14 @@ export class RealtorMapper {
     }
     return realtorsReponse
   
+  }
+
+  public RealtorResponseListToPaginationResponse(realtors: RealtorResponse[], total:number, page:number, take:number): PaginationResponse<RealtorResponse>{
+
+    const paginationResponse = new PaginationResponse<RealtorResponse>(realtors, page, Math.ceil( total / take))
+
+    return paginationResponse
+
   }
 
 }
