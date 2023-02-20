@@ -200,7 +200,7 @@ describe('RealtorController E2E tests', () => {
   
   })
 
-  test('should delete with status 200 one realtor', async () => {
+  test('should delete one realtor with status 200', async () => {
 
     const response = await request(app.server)
       .delete('/realtor/14')
