@@ -178,7 +178,7 @@ describe('RealtorController E2E tests', () => {
   
   })
 
-  test('should put with status 200 one realtor', async () => {
+  test('should update one realtor with status 200', async () => {
 
     const realtor = {
       id:14,
