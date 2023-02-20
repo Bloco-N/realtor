@@ -157,7 +157,7 @@ describe('RealtorController E2E tests', () => {
   
   })
 
-  test('should add with status 201 one realtor', async () => {
+  test('should add one realtor with status 201', async () => {
 
     const realtor = {
       email: 'realtor14@mail.com',
