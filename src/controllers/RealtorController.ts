@@ -12,22 +12,46 @@ export class RealtorController {
 
   public async listAll(req: Request<unknown, unknown, unknown, ListAllRealtorsQuery>, res: Response) {
 
-    const errors = validationResult(req)
+    try {
+      
+      const errors = validationResult(req).array()
+  
+      if(errors.length > 0){
 
-    const {
-      query: { search, page, offset }
-    } = req
-    const realtors = await this.repository.findAll(search, page, offset)
-    res.status(200).send(realtors)
+        const error = errors[0].msg as ApiError
+        throw new ApiError(error.status, error.message)
+
+      }
+  
+      const {
+        query: { search, page, offset }
+      } = req
+
+      const realtors = await this.repository.findAll(search, Number(page), Number(offset))
+      res.status(200).send(realtors)
+    
+    } catch (error) {
+
+      if (error instanceof ApiError) {
+
+        res.status(error.status).send(error.message)
+      
+      }else{
+
+        res.status(500).send('internal errror')
+
+      }
+    
+    }
   
   }
 
-  public async get(req: Request<{ id: number }>, res: Response) {
+  public async get(req: Request, res: Response) {
 
     try {
 
       const { id } = req.params
-      const realtor = await this.repository.get(id)
+      const realtor = await this.repository.get(Number(id))
 
       res.status(200).send(realtor)
     
@@ -37,6 +61,10 @@ export class RealtorController {
 
         res.status(error.status).send(error.message)
       
+      }else{
+
+        res.status(500).send('internal errror')
+
       }
     
     }
@@ -47,7 +75,7 @@ export class RealtorController {
 
     const { body } = req
     const created = await this.repository.add(body)
-    res.status(200).send(created)
+    res.status(201).send(created)
   
   }
 
@@ -56,6 +84,31 @@ export class RealtorController {
     const { body } = req
     const updated = await this.repository.update(body)
     res.status(200).send(updated)
+  
+  }
+
+  public async remove(req: Request, res:Response){
+
+    try {
+
+      const { id } = req.params
+      const realtor = await this.repository.remove(Number(id))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      if (error instanceof ApiError) {
+
+        res.status(error.status).send(error.message)
+      
+      }else{
+
+        res.status(500).send('internal errror')
+
+      }
+    
+    }
   
   }
 

@@ -5,18 +5,23 @@ import { ApiError }             from '../errors/ApiError'
 import { RealtorMapper }        from '../mappers/RealtorMapper'
 import { IRealtorRepository }   from './IRealtorRepository'
 import { PrismaClient }         from '@prisma/client'
+import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
 
 export class RealtorRepository implements IRealtorRepository {
 
   prisma = new PrismaClient()
   mapper = new RealtorMapper()
 
-  public async findAll(search: string, page: number, offset: number): Promise<RealtorResponse[]> {
+  public async findAll(search: string, page: number, offset: number): Promise<PaginationResponse<RealtorResponse>> {
 
     let take = 10
     let skip = 0
     if (offset) take = offset
     if (page) skip = take * (page - 1)
+    else page = 1
+
+    const totalOfRealtors = await this.prisma.realtor.count()
+
     if (search) {
 
       const realtors = await this.prisma.realtor.findMany({
@@ -34,12 +39,14 @@ export class RealtorRepository implements IRealtorRepository {
         }
       })
       const realtorsResponse = this.mapper.RealtorListToRealtorResponseList(realtors)
-      return realtorsResponse
-    
+      const paginationResponse = this.mapper.RealtorResponseListToPaginationResponse(realtorsResponse, totalOfRealtors, page, take)
+      return paginationResponse
+      
     }
     const realtors = await this.prisma.realtor.findMany({ skip, take })
     const realtorsResponse = this.mapper.RealtorListToRealtorResponseList(realtors)
-    return realtorsResponse
+    const paginationResponse = this.mapper.RealtorResponseListToPaginationResponse(realtorsResponse, totalOfRealtors, page, take)
+    return paginationResponse
   
   }
 
