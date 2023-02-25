@@ -6,6 +6,9 @@ import { RealtorMapper }        from '../mappers/RealtorMapper'
 import { IRealtorRepository }   from './IRealtorRepository'
 import { PrismaClient }         from '@prisma/client'
 import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
+import { compare, hash }        from 'bcryptjs'
+import { sign }                 from 'jsonwebtoken'
+import { SignInRealtorRequest } from '../dtos/requests/SignInRealtorRequest'
 
 export class RealtorRepository implements IRealtorRepository {
 
@@ -63,9 +66,42 @@ export class RealtorRepository implements IRealtorRepository {
   
   }
 
+  public async signIn(data: SignInRealtorRequest): Promise<string>{
+
+    const {password, email} = data
+
+    const realtor = await this.prisma.realtor.findUnique({ where: { email } })
+    if(!realtor){
+
+      throw new ApiError(404, 'realtor not found')
+
+    }
+
+    const match = await compare(password, realtor.password)
+    if(!match) {
+
+      throw new ApiError(400, 'password incorrect')
+
+    }
+
+    const token = sign({
+      id:realtor.id,
+      email: realtor.email,
+      firstName: realtor.firstName,
+      lastName: realtor.lastName
+    }, process.env.API_SECRET, {
+      expiresIn: '8h'
+    })
+
+    return token
+  
+  }
+
   public async add(data: CreateRealtorRequest): Promise<string> {
 
-    const realtor = await this.prisma.realtor.create({ data })
+    const { password, ...realtorData } = data
+    const hashed = await hash(password, 10)
+    const realtor = await this.prisma.realtor.create({ data:{ password: hashed, ...realtorData} })
     if (realtor) return 'created'
   
   }
