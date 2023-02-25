@@ -1,9 +1,8 @@
-import { App } from './app'
+import { App }     from './app'
+import * as dotenv from 'dotenv'
 
-const app = new App()
+dotenv.config()
 
-app.server.listen(8080, () => {
+const app = new App(8080)
 
-  console.log('server runing in http://localhost:8080')
-
-})
+app.listen()

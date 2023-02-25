@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import request          from 'supertest'
 import { App }          from '../../src/app'
 
-const app = new App()
+const app = new App(8081)
 
 const prisma = new PrismaClient()
 
