@@ -2,8 +2,6 @@ import {  Response } from "express"
 import { ApiError }  from "../errors/ApiError"
 
 const errorHandling = ( res:Response, error:Error) => {
-
-  console.log('error middleware: ' + error.message)
   
   if (error instanceof ApiError) {
   

@@ -106,11 +106,10 @@ export class RealtorRepository implements IRealtorRepository {
   
   }
 
-  public async update(data: UpdateRealtorRequest): Promise<string> {
+  public async update(data: UpdateRealtorRequest, id: number): Promise<string> {
 
-    const { id, ...content } = data
-
-    const realtor = await this.prisma.realtor.update({ data: content, where: { id } })
+    const { user, ...dataUpdate } = data
+    const realtor = await this.prisma.realtor.update({ data:dataUpdate, where: { id } })
     if (realtor) return 'updated'
   
   }

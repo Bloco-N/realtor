@@ -1,5 +1,4 @@
 export interface UpdateRealtorRequest {
-  id: number
   password?: string
   firstName?: string
   lastName?: string
@@ -10,4 +9,10 @@ export interface UpdateRealtorRequest {
   twitter?: string | null
   professional_email?: string | null
   website?: string | null
+  user:{
+    id:number,
+    email:string,
+    firstName:string
+    lastName:string
+  }
 }

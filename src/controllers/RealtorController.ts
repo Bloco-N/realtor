@@ -95,7 +95,7 @@ export class RealtorController {
     try {
 
       const { body } = req
-      const updated = await this.repository.update(body)
+      const updated = await this.repository.update(body, body.user.id)
       res.status(200).send(updated)
       
     } catch (error) {

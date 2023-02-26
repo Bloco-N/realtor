@@ -9,6 +9,6 @@ export interface IRealtorRepository {
   get: (id: number) => Promise<RealtorResponse>
   signIn(data: SignInRealtorRequest): Promise<string>
   add: (data: CreateRealtorRequest) => Promise<string>
-  update: (data: UpdateRealtorRequest) => Promise<string>
+  update: (data: UpdateRealtorRequest, id:number) => Promise<string>
   remove: (id: number) => Promise<string>
 }
