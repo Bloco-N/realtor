@@ -133,7 +133,7 @@ describe('RealtorController E2E tests', () => {
   test('should get with status 200 one realtor by id ', async () => {
     
     const response = await request(app.server)
-      .get('/realtor/1')
+      .get('/realtor/by-id/1')
 
     const { body } = response
 
@@ -147,7 +147,7 @@ describe('RealtorController E2E tests', () => {
   test('should get status 404, not found', async () => {
 
     const response = await request(app.server)
-      .get('/realtor/1400')
+      .get('/realtor/by-id/1400')
 
     const { text } = response
 
@@ -178,19 +178,85 @@ describe('RealtorController E2E tests', () => {
   
   })
 
+  test('should sign in one realtor with status 200', async () => {
+
+    const realtor = {
+      email: 'realtor15@mail.com',
+      firstName: 'realtor',
+      lastName: '15',
+      password: 'realtorPassword15'
+    }
+
+    const realtorSignIn = {
+      email: 'realtor15@mail.com',
+      password: 'realtorPassword15'
+    }
+
+    const responseSignUp = await request(app.server)
+      .post('/realtor/sign-up')
+      .send(realtor)
+
+    const { text: textSignUp } = responseSignUp
+
+    expect(textSignUp).toBeDefined()
+    expect(textSignUp).toBe('created')
+    expect(responseSignUp.statusCode).toBe(201)
+
+    const response = await request(app.server)
+      .get('/realtor/sign-in')
+      .send(realtorSignIn)
+
+    const { text } = response
+
+    expect(text).toBeDefined()
+    expect(response.statusCode).toBe(200)
+   
+  })
+
   test('should update one realtor with status 200', async () => {
 
     const realtor = {
-      id:14,
-      email: 'realtor14@mail.com',
+      email: 'realtor16@mail.com',
+      firstName: 'realtor',
+      lastName: '16',
+      password: 'realtorPassword16'
+    }
+
+    const realtorSignIn = {
+      email: 'realtor16@mail.com',
+      password: 'realtorPassword16'
+    }
+
+    const responseSignUp = await request(app.server)
+      .post('/realtor/sign-up')
+      .send(realtor)
+
+    const { text: textSignUp } = responseSignUp
+
+    expect(textSignUp).toBeDefined()
+    expect(textSignUp).toBe('created')
+    expect(responseSignUp.statusCode).toBe(201)
+
+    const responseSignIn = await request(app.server)
+      .get('/realtor/sign-in')
+      .send(realtorSignIn)
+
+    const { text: token } = responseSignIn
+
+    expect(token).toBeDefined()
+    expect(responseSignIn.statusCode).toBe(200)
+
+    const realtorUpdate = {
+      email: 'realtor16@mail.com',
       firstName: 'realtor change',
-      lastName: '14',
-      password: 'realtorPassword14'
+      lastName: '16',
+      password: 'realtorPassword16'
     }
 
     const response = await request(app.server)
       .put('/realtor')
-      .send(realtor)
+      .send(realtorUpdate)
+      .set('authorization', 'Bearer ' + token)
 
     const { text } = response
 
