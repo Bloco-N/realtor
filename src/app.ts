@@ -4,8 +4,11 @@ import express    from 'express'
 export class App {
 
   public server: express.Application
+  private port: number
 
-  constructor() {
+  constructor(port: number) {
+
+    this.port = port
 
     this.server = express()
     this.middleware()
@@ -21,7 +24,17 @@ export class App {
 
   private router() {
 
-    this.server.use('/', router)
+    this.server.use(router)
+    
+  }
+
+  public listen(){
+
+    this.server.listen(this.port, () => {
+
+      console.log('server runing in http://localhost:' + this.port)
+    
+    })
   
   }
 
