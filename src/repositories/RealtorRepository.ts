@@ -100,6 +100,8 @@ export class RealtorRepository implements IRealtorRepository {
   public async add(data: CreateRealtorRequest): Promise<string> {
 
     const { password, ...realtorData } = data
+    const realtorExists = await this.prisma.realtor.findUnique({where: {email: realtorData.email}})
+    if(realtorExists) throw new ApiError(400, 'realtor already exists')
     const hashed = await hash(password, 10)
     const realtor = await this.prisma.realtor.create({ data:{ password: hashed, ...realtorData} })
     if (realtor) return 'created'
