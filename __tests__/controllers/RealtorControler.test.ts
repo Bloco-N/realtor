@@ -133,7 +133,7 @@ describe('RealtorController E2E tests', () => {
   test('should get with status 200 one realtor by id ', async () => {
     
     const response = await request(app.server)
-      .get('/realtor/by-id/1')
+      .get('/realtor/1')
 
     const { body } = response
 
@@ -147,7 +147,7 @@ describe('RealtorController E2E tests', () => {
   test('should get status 404, not found', async () => {
 
     const response = await request(app.server)
-      .get('/realtor/by-id/1400')
+      .get('/realtor/1400')
 
     const { text } = response
 
@@ -203,7 +203,7 @@ describe('RealtorController E2E tests', () => {
     expect(responseSignUp.statusCode).toBe(201)
 
     const response = await request(app.server)
-      .get('/realtor/sign-in')
+      .post('/realtor/sign-in')
       .send(realtorSignIn)
 
     const { text } = response
@@ -238,7 +238,7 @@ describe('RealtorController E2E tests', () => {
     expect(responseSignUp.statusCode).toBe(201)
 
     const responseSignIn = await request(app.server)
-      .get('/realtor/sign-in')
+      .post('/realtor/sign-in')
       .send(realtorSignIn)
 
     const { text: token } = responseSignIn
