@@ -23,22 +23,45 @@ export class RealtorRepository implements IRealtorRepository {
     if (page) skip = take * (page - 1)
     else page = 1
 
-    const totalOfRealtors = await this.prisma.realtor.count()
-
+    let totalOfRealtors = await this.prisma.realtor.count()
+    
     if (search) {
+
+      totalOfRealtors = await this.prisma.realtor.count({ where: {
+        OR:[
+          {
+            firstName:{
+              contains: search,
+              mode: 'insensitive'
+            }
+          },
+          {
+            lastName:{
+              contains: search,
+              mode: 'insensitive'
+            }
+          }
+        ]
+      } })
 
       const realtors = await this.prisma.realtor.findMany({
         skip,
         take,
         where: {
-          OR: {
-            firstName: {
-              contains: search
+          OR:[
+            {
+              firstName:{
+                contains: search,
+                mode: 'insensitive'
+              }
             },
-            lastName: {
-              contains: search
+            {
+              lastName:{
+                contains: search,
+                mode: 'insensitive'
+              }
             }
-          }
+          ]
         }
       })
       const realtorsResponse = this.mapper.RealtorListToRealtorResponseList(realtors)

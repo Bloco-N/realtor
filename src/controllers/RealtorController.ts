@@ -28,7 +28,7 @@ export class RealtorController {
         query: { search, page, offset }
       } = req
   
-      const realtors = await this.repository.findAll(search, Number(page), Number(offset))
+      const realtors = await this.repository.findAll(search as string, Number(page), Number(offset))
       res.status(200).send(realtors)
       
     } catch (error) {
