@@ -148,12 +148,14 @@ model Partnership {
 }
 
 model Property {
-  id        Int      @id @default(autoincrement())
-  link      String
-  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
-  Agency    Agency?  @relation(fields: [agencyId], references: [id])
-  realtorId Int?
-  agencyId  Int?
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  link        String
+  Realtor     Realtor? @relation(fields: [realtorId], references: [id])
+  Agency      Agency?  @relation(fields: [agencyId], references: [id])
+  realtorId   Int?
+  agencyId    Int?
 
   @@map("properties")
 }
