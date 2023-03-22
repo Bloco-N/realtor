@@ -1,6 +1,6 @@
 import { Request, Response }     from "express";
 import { CreatePropertyRequest } from "../dtos/requests/CreatePropertyRequest";
-import { PropertyRepository }    from "../repositories/PorpertyRepository";
+import { PropertyRepository }    from "../repositories/PropertyRepository";
 import { DecodeRealtor }         from "../types/DecodeRealtor";
 
 export class PropertyController{
@@ -29,7 +29,7 @@ export class PropertyController{
 
   public async remove(req: Request, res: Response){
     
-    const { body, query: { id } } = req
+    const { body, params: { id } } = req
 
     const user = body.user as DecodeRealtor
 
