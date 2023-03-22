@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { decode }                          from "jsonwebtoken";
 import { ApiError }                        from "../errors/ApiError";
+import { DecodeRealtor }                   from "../types/DecodeRealtor";
 
 export class Auth{
 
@@ -16,7 +17,7 @@ export class Auth{
 
     const token = authorization.split(' ')[1]
 
-    const user = decode(token) as { id:number, email:string, firstName: string, lastName: string}
+    const user = decode(token) as DecodeRealtor
 
     req.body.user = user
 
