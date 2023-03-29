@@ -8,7 +8,7 @@ export class PropertyRepository{
 
   public async findAllFromRealtorId(realtorId: number){
 
-    const properties = await this.prisma.property.findMany({where:{ realtorId: realtorId }})
+    const properties = await this.prisma.property.findMany({where:{ realtorId }})
 
     return properties
 
