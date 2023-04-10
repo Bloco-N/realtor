@@ -1,18 +1,20 @@
-import { Request, Response, NextFunction } from "express";
-import { decode }                          from "jsonwebtoken";
-import { ApiError }                        from "../errors/ApiError";
-import { DecodeRealtor }                   from "../types/DecodeRealtor";
+import { ApiError }                        from '../errors/ApiError'
+import { DecodeRealtor }                   from '../types/DecodeRealtor'
+import { NextFunction, Request, Response } from 'express'
+import { decode }                          from 'jsonwebtoken'
 
-export class Auth{
+export class Auth {
 
-  realtorAuth(req:Request, res:Response, next:NextFunction){
+  realtorAuth(req: Request, res: Response, next: NextFunction) {
 
-    const { headers: { authorization }} = req
+    const {
+      headers: { authorization }
+    } = req
 
-    if(!authorization){
+    if (!authorization) {
 
       throw new ApiError(401, 'unauthorized')
-
+    
     }
 
     const token = authorization.split(' ')[1]
@@ -22,7 +24,7 @@ export class Auth{
     req.body.user = user
 
     next()
-
+  
   }
 
 }

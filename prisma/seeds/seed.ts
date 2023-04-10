@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { hash }         from "bcryptjs";
+import { PrismaClient } from '@prisma/client'
+import { hash }         from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -84,9 +84,9 @@ const mockRealtors = [
   }
 ]
 
-async function main(){
+async function main() {
 
-  for(const item of mockRealtors){
+  for (const item of mockRealtors) {
 
     const hashPassowrd = await hash(item.password, 10)
 
