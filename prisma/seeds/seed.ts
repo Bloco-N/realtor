@@ -84,6 +84,13 @@ const mockRealtors = [
   }
 ]
 
+const mockServices = [
+  'Acompanhamento para compra de imóvel',
+  'Venda de imóvel',
+  'Seleção de inquilino e gestão de arrendamento',
+  'Seleção de inquilino'
+]
+
 async function main(){
 
   for(const item of mockRealtors){
@@ -96,6 +103,16 @@ async function main(){
         firstName: item.firstName,
         lastName: item.lastName,
         password: hashPassowrd
+      }
+    })
+  
+  }
+
+  for(const item of mockServices){
+
+    await prisma.service.create({
+      data:{
+        title: item
       }
     })
   

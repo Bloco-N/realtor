@@ -1,35 +1,48 @@
-import { PrismaClient }         from "@prisma/client";
-import { CreateServiceRequest } from "../dtos/requests/CreateServiceRequest";
-import { DecodeRealtor }        from "../types/DecodeRealtor";
-
+import { PrismaClient } from "@prisma/client";
 export class ServiceRepository {
 
   private prisma = new PrismaClient()
 
-  public async findAllByRealtorId(realtorId: number){
+  public async findAll(){
 
-    const services = await this.prisma.service.findMany({where:{ realtorId }})
+    const services = await this.prisma.service.findMany()
+    return services
+
+  }
+
+  public async findAllByRealtor(realtorId:number){
+
+    const realtorServices = await this.prisma.realtorService.findMany({where:{realtorId}, include: {Service: true}})
+
+    const services = realtorServices.map(item =>{
+
+      return {
+        id: item.id,
+        service:item.Service
+      }
+    
+    })
 
     return services
-  
+
   }
 
-  public async add(data:CreateServiceRequest){
+  public async createRealtorService(realtorId: number, serviceId: number){
 
-    const service = await this.prisma.service.create({data})
-    if(service) return 'created'
-  
+    const created = await this.prisma.realtorService.create({data:{
+      realtorId,
+      serviceId
+    }})
+
+    if(created) return 'created'
+
   }
 
-  public async remove(user:DecodeRealtor, id:number){
+  public async removeRealtorService(id: number){
 
-    const service = await this.prisma.service.findUnique({where: {id}})
-    if(service.realtorId === user.id){
+    const deleted = await this.prisma.realtorService.delete({where:{id}})
 
-      const deleted = await this.prisma.service.delete({where: {id}})
-      if(deleted) return 'deleted'
-    
-    }
+    if(deleted) return 'deleted'
 
   }
 

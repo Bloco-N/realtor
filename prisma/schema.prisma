@@ -17,6 +17,31 @@ enum Fluency {
   NATIVE
 }
 
+enum PropertyType {
+  HOME
+  APARTMENT
+  NEW_BUILDING
+  OFFICE
+  COMMERCIAL
+  GARAGE
+  LAND
+  BUILDING
+  COLLECTION
+}
+
+enum Rooms {
+  T1
+  T2
+  T3
+  T4_PLUS
+}
+
+enum Preservation {
+  NEW_BUILDING
+  GOOD
+  TO_RECOVER
+}
+
 model Client {
   id        Int       @id @default(autoincrement())
   email     String    @unique
@@ -35,6 +60,7 @@ model Realtor {
   password           String
   firstName          String
   lastName           String
+  profilePicture     String?
   introduction       String?
   phone              String?
   whatsapp           String?
@@ -42,7 +68,7 @@ model Realtor {
   twitter            String?
   professional_email String?
   website            String?
-  Services           Service[]
+  RealtorServices    RealtorService[]
   Partnerships       Partnership[]
   Awards             Award[]
   Sales              Sale[]
@@ -67,7 +93,6 @@ model Agency {
   professional_email String?
   website            String?
   addressId          Int
-  Services           Service[]
   Address            Address          @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
@@ -80,12 +105,19 @@ model Agency {
 model Service {
   id        Int      @id @default(autoincrement())
   title     String
-  realtorId Int?
-  agencyId  Int?
-  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
-  Agency    Agency?  @relation(fields: [agencyId], references: [id])
+  RealtorServices RealtorService[]
 
   @@map("services")
+}
+
+model RealtorService {
+  id        Int @id @default(autoincrement())
+  realtorId Int
+  serviceId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("realtor_services")
 }
 
 model City {
@@ -161,14 +193,22 @@ model Partnership {
 }
 
 model Property {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  link        String
-  Realtor     Realtor? @relation(fields: [realtorId], references: [id])
-  Agency      Agency?  @relation(fields: [agencyId], references: [id])
-  realtorId   Int?
-  agencyId    Int?
+  id                 Int           @id @default(autoincrement())
+  title              String
+  price              String
+  propertyType       PropertyType
+  grossArea          String?
+  usefulArea         String?
+  rooms              Rooms?
+  preservation       Preservation              
+  link               String
+  profilePicture     String?
+  Realtor            Realtor?      @relation(fields: [realtorId], references: [id])
+  Agency             Agency?       @relation(fields: [agencyId], references: [id])
+  realtorId          Int?
+  agencyId           Int?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
   @@map("properties")
 }

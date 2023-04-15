@@ -23,8 +23,9 @@ router.get('/property/realtor/:realtorId', propertyController.listAllByRealtorId
 router.post('/property', propertyController.add.bind(propertyController))
 router.delete('/property/:id', auth.realtorAuth, propertyController.remove.bind(propertyController))
 
-router.get('/service/realtor/:realtorId', serviceController.listAllByRealtorId.bind(serviceController))
-router.post('/service', serviceController.add.bind(serviceController))
-router.delete('/service/:id', auth.realtorAuth, serviceController.remove.bind(serviceController))
+router.get('/service', serviceController.listAll.bind(serviceController))
+router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))
+router.post('/service/realtor', serviceController.createRealtorService.bind(serviceController))
+router.delete('/service/realtor/:id', auth.realtorAuth, serviceController.removeRealtorService.bind(serviceController))
 
 export { router }

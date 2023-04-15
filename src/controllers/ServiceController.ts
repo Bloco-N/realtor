@@ -1,41 +1,44 @@
-import { Request, Response }    from "express";
-import { CreateServiceRequest } from "../dtos/requests/CreateServiceRequest";
-import { ServiceRepository }    from "../repositories/ServiceRepository";
-import { DecodeRealtor }        from "../types/DecodeRealtor";
+import { Request, Response } from "express";
+import { ServiceRepository } from "../repositories/ServiceRepository";
 
 export class ServiceController{
 
   repository = new ServiceRepository()
 
-  public async listAllByRealtorId(req: Request, res: Response){
-
-    const { params: { realtorId } } = req
-
-    const services = await this.repository.findAllByRealtorId(Number(realtorId))
-
-    res.status(200).send(services)
+  public async listAll(req:Request, res:Response){
+    
+    const services = await this.repository.findAll()
+    res.status(200).json(services)
 
   }
 
-  public async add(req:Request, res:Response){
-    
-    const body = req.body as CreateServiceRequest
+  public async listAllByRealtor(req:Request, res:Response){
 
-    const created = await this.repository.add(body)
+    const { params:{ realtorId } } = req
 
-    res.status(201).send(created)
+    const services = await this.repository.findAllByRealtor(Number(realtorId))
+
+    res.status(200).json(services)
 
   }
 
-  public async remove(req: Request, res: Response){
-    
-    const { body, params: { id } } = req
+  public async createRealtorService(req: Request, res:Response){
 
-    const user = body.user as DecodeRealtor
+    const { body } = req
 
-    const deleted = await this.repository.remove(user, Number(id))
+    const created = await this.repository.createRealtorService(body.realtorId, body.serviceId)
 
-    res.status(200).send(deleted)
+    res.status(200).send(created)
+
+  }
+
+  public async removeRealtorService(req:Request, res:Response){
+
+    const { params:{ id } } = req
+
+    const removed = await this.repository.removeRealtorService(Number(id))
+
+    res.status(200).send(removed)
 
   }
 
