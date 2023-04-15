@@ -1,124 +1,51 @@
-import { RealtorResponse }   from '../../src/dtos/responses/RealtorResponse'
-import { ApiError }          from '../../src/errors/ApiError'
-import { RealtorRepository } from '../../src/repositories/RealtorRepository'
+import { PaginationResponse } from '../../src/dtos/responses/PaginationResponse'
+import { RealtorResponse }    from '../../src/dtos/responses/RealtorResponse'
+import { ApiError }           from '../../src/errors/ApiError'
+import { RealtorRepository }  from '../../src/repositories/RealtorRepository'
 
 const realtorRepository = new RealtorRepository()
-
-const mockRealtors = [
-  {
-    email: 'realtor1@mail.com',
-    firstName: 'realtor',
-    lastName: '1',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor2@mail.com',
-    firstName: 'realtor',
-    lastName: '2',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor3@mail.com',
-    firstName: 'realtor',
-    lastName: '3',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor4@mail.com',
-    firstName: 'realtor',
-    lastName: '4',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor5@mail.com',
-    firstName: 'realtor',
-    lastName: '5',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor6@mail.com',
-    firstName: 'realtor',
-    lastName: '6',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor7@mail.com',
-    firstName: 'realtor',
-    lastName: '7',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor8@mail.com',
-    firstName: 'realtor',
-    lastName: '8',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor9@mail.com',
-    firstName: 'realtor',
-    lastName: '9',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor10@mail.com',
-    firstName: 'realtor',
-    lastName: '10',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor11@mail.com',
-    firstName: 'realtor',
-    lastName: '11',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor12@mail.com',
-    firstName: 'realtor',
-    lastName: '12',
-    password: 'realtorPassword1'
-  },
-  {
-    email: 'realtor13@mail.com',
-    firstName: 'realtor',
-    lastName: '13',
-    password: 'realtorPassword1'
-  }
-]
 
 describe('RealtorRepository unit tests', () => {
 
   beforeAll(async () => {
 
+    await realtorRepository.prisma.$executeRaw`TRUNCATE realtors RESTART IDENTITY CASCADE`
+
     await realtorRepository.prisma.realtor.createMany({
-      data: mockRealtors
+      data: [...Array(15).keys()].map((n) => ({
+        email: `realtor${n}@email.com`,
+        firstName: `realtor`,
+        lastName: `${n}`,
+        password: `realtorPassword${n}`
+      }))
     })
   
   })
 
   test('should find all realtors', async () => {
 
-    const realtors = await realtorRepository.findAll('', 1, 10)
+    const realtors = await realtorRepository.findAll('', 0, 0)
     expect(realtors).toBeDefined()
-    expect(realtors).toBeInstanceOf(Array<RealtorResponse>)
+    expect(realtors).toBeInstanceOf(PaginationResponse<RealtorResponse>)
   
   })
 
   test('should find all realtors, second page', async () => {
 
-    const realtors = await realtorRepository.findAll('', 2, 10)
+    const realtors = await realtorRepository.findAll('', 2, 5)
     expect(realtors).toBeDefined()
-    expect(realtors).toBeInstanceOf(Array<RealtorResponse>)
-    expect(realtors[0].id).toBe(11)
-    expect(realtors.length).toBe(3)
+    expect(realtors).toBeInstanceOf(PaginationResponse<RealtorResponse>)
+    expect(realtors.list[0].id).toBe(6)
+    expect(realtors.list.length).toBe(5)
   
   })
 
   test('should create a realtor', async () => {
 
-    const created = await realtorRepository.add({
-      email: 'realtor14@email.com',
+    const created = await realtorRepository.create({
+      email: 'realtor16@email.com',
       firstName: 'realtor',
-      lastName: '14',
+      lastName: '16',
       password: 'realtorPassword14'
     })
 
@@ -129,18 +56,23 @@ describe('RealtorRepository unit tests', () => {
 
   test('should find a realtor by id', async () => {
 
-    const realtor = (await realtorRepository.get(14)) as RealtorResponse
+    const realtor = (await realtorRepository.get(16)) as RealtorResponse
 
     expect(realtor).toBeDefined()
-    expect(realtor.id).toBe(14)
-    expect(realtor.email).toBe('realtor14@email.com')
+    expect(realtor.id).toBe(16)
+    expect(realtor.email).toBe('realtor16@email.com')
   
   })
 
   test('should update a realtor by id', async () => {
 
     const updated = await realtorRepository.update({
-      id: 14,
+      user: {
+        id: 14,
+        email: '',
+        firstName: '',
+        lastName: ''
+      },
       firstName: 'realtor alterado'
     })
 
@@ -157,7 +89,7 @@ describe('RealtorRepository unit tests', () => {
 
   test('should delete a realtor by id', async () => {
 
-    const deleted = await realtorRepository.remove(14)
+    const deleted = await realtorRepository.delete(14)
 
     expect(deleted).toBeDefined()
     expect(deleted).toBe('deleted')
