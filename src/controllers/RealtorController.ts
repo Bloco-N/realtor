@@ -2,10 +2,10 @@ import { CreateRealtorRequest } from '../dtos/requests/CreateRealtorRequest'
 import { ListAllRealtorsQuery } from '../dtos/requests/ListAllRealtorsQuery'
 import { UpdateRealtorRequest } from '../dtos/requests/UpdateRealtorRequest'
 import { ApiError }             from '../errors/ApiError'
+import errorHandling            from '../handlers/errorHandling'
 import { RealtorRepository }    from '../repositories/RealtorRepository'
 import { Request, Response }    from 'express'
 import { validationResult }     from 'express-validator'
-import errorHandling            from '../handlers/errorHandling'
 
 export class RealtorController {
 
@@ -16,37 +16,38 @@ export class RealtorController {
     try {
 
       const errors = validationResult(req).array()
-    
-      if(errors.length > 0){
-  
+
+      if (errors.length > 0) {
+
         const error = errors[0].msg as ApiError
         throw new ApiError(error.status, error.message)
-  
+      
       }
-    
+
       const {
         query: { search, page, offset }
       } = req
-  
-      const realtors = await this.repository.findAll(search as string, Number(page), Number(offset))
+
+      const realtors = await this.repository.findAll(search ? String(search) : '', page ? Number(page) : 1, offset ? Number(offset) : 10)
+
       res.status(200).send(realtors)
-      
+    
     } catch (error) {
 
       errorHandling(res, error)
     
     }
-
+  
   }
 
-  public async signIn(req:Request, res:Response){
+  public async signIn(req: Request, res: Response) {
 
     try {
-      
+
       const { body } = req
-        
+
       const token = await this.repository.signIn(body)
-        
+
       res.status(200).send(token)
     
     } catch (error) {
@@ -54,7 +55,7 @@ export class RealtorController {
       errorHandling(res, error)
     
     }
-
+  
   }
 
   public async get(req: Request, res: Response) {
@@ -63,9 +64,9 @@ export class RealtorController {
 
       const { id } = req.params
       const realtor = await this.repository.get(Number(id))
-  
+
       res.status(200).send(realtor)
-      
+    
     } catch (error) {
 
       errorHandling(res, error)
@@ -79,10 +80,10 @@ export class RealtorController {
     try {
 
       const { body } = req
-      const created = await this.repository.add(body)
+      const created = await this.repository.create(body)
       res.status(201).send(created)
-      
-    }catch (error) {
+    
+    } catch (error) {
 
       errorHandling(res, error)
     
@@ -95,9 +96,9 @@ export class RealtorController {
     try {
 
       const { body } = req
-      const updated = await this.repository.update(body, body.user.id)
+      const updated = await this.repository.update(body)
       res.status(200).send(updated)
-      
+    
     } catch (error) {
 
       errorHandling(res, error)
@@ -106,16 +107,16 @@ export class RealtorController {
   
   }
 
-  public async remove(req: Request, res:Response){
+  public async remove(req: Request, res: Response) {
 
     try {
 
       const { id } = req.params
-      const realtor = await this.repository.remove(Number(id))
-  
+      const realtor = await this.repository.delete(Number(id))
+
       res.status(200).send(realtor)
-      
-    }catch (error) {
+    
+    } catch (error) {
 
       errorHandling(res, error)
     

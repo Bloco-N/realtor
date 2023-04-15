@@ -1,6 +1,6 @@
 import { router } from './router'
-import express    from 'express'
 import cors       from 'cors'
+import express    from 'express'
 
 export class App {
 
@@ -27,10 +27,10 @@ export class App {
   private router() {
 
     this.server.use(router)
-    
+  
   }
 
-  public listen(){
+  public listen() {
 
     this.server.listen(this.port, () => {
 

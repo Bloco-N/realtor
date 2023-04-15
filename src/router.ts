@@ -1,10 +1,10 @@
+import { PropertyController }  from './controllers/PropertyController'
 import { RealtorController }   from './controllers/RealtorController'
+import { ServiceController }   from './controllers/ServiceController'
+import { Auth }                from './middlewares/Auth'
 import ListAllValidationSchema from './validationSchemas/ListAllValidationSchema'
 import { Router }              from 'express'
 import { checkSchema }         from 'express-validator'
-import { Auth }                from './middlewares/Auth'
-import { PropertyController }  from './controllers/PropertyController'
-import { ServiceController }   from './controllers/ServiceController'
 
 const router = Router()
 const realtorController = new RealtorController()

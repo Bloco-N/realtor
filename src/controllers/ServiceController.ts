@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/ServiceRepository";
 
-export class ServiceController{
+export class ServiceController {
 
   repository = new ServiceRepository()
 

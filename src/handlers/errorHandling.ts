@@ -1,14 +1,14 @@
-import {  Response } from "express"
-import { ApiError }  from "../errors/ApiError"
+import { ApiError } from '../errors/ApiError'
+import { Response } from 'express'
 
-const errorHandling = ( res:Response, error:Error) => {
-  
+const errorHandling = (res: Response, error: Error) => {
+
   if (error instanceof ApiError) {
-  
+
     res.status(error.status).send(error.message)
-    
-  }else{
   
+  } else {
+
     res.status(500).send('internal errror')
   
   }

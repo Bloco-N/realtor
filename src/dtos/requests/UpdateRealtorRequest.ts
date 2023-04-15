@@ -9,10 +9,10 @@ export interface UpdateRealtorRequest {
   twitter?: string | null
   professional_email?: string | null
   website?: string | null
-  user:{
-    id:number,
-    email:string,
-    firstName:string
-    lastName:string
+  user: {
+    id: number
+    email: string
+    firstName: string
+    lastName: string
   }
 }
