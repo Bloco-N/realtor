@@ -22,7 +22,8 @@ export class RealtorRepository {
     instagram: true,
     twitter: true,
     professional_email: true,
-    website: true
+    website: true,
+    profilePicture: true
   }
   private where = (search: string): Prisma.RealtorWhereInput =>
     search
