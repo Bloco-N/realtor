@@ -7,7 +7,7 @@ import { AgencyRepository }    from '../repositories/AgencyRepository'
 import { Request, Response }   from 'express'
 import { validationResult }    from 'express-validator'
 
-export class ClientController {
+export class AgencyController {
 
   private repository = new AgencyRepository()
 
