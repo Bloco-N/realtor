@@ -93,7 +93,7 @@ model Agency {
   professional_email String?
   website            String?
   addressId          Int
-  Address            Address          @relation(fields: [addressId], references: [id])
+  Address            Address?         @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
   AgencyCity         AgencyCity[]
@@ -103,15 +103,15 @@ model Agency {
 }
 
 model Service {
-  id        Int      @id @default(autoincrement())
-  title     String
+  id              Int              @id @default(autoincrement())
+  title           String
   RealtorServices RealtorService[]
 
   @@map("services")
 }
 
 model RealtorService {
-  id        Int @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   realtorId Int
   serviceId Int
   Realtor   Realtor @relation(fields: [realtorId], references: [id])
@@ -194,22 +194,22 @@ model Partnership {
 }
 
 model Property {
-  id                 Int           @id @default(autoincrement())
-  title              String
-  price              String
-  propertyType       PropertyType
-  grossArea          String?
-  usefulArea         String?
-  rooms              Rooms?
-  preservation       Preservation              
-  link               String
-  profilePicture     String?
-  Realtor            Realtor?      @relation(fields: [realtorId], references: [id])
-  Agency             Agency?       @relation(fields: [agencyId], references: [id])
-  realtorId          Int?
-  agencyId           Int?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  id             Int          @id @default(autoincrement())
+  title          String
+  price          String
+  propertyType   PropertyType
+  grossArea      String?
+  usefulArea     String?
+  rooms          Rooms?
+  preservation   Preservation
+  link           String
+  profilePicture String?
+  Realtor        Realtor?     @relation(fields: [realtorId], references: [id])
+  Agency         Agency?      @relation(fields: [agencyId], references: [id])
+  realtorId      Int?
+  agencyId       Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("properties")
 }

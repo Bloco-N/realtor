@@ -20,7 +20,7 @@ export class App {
   private middleware() {
 
     this.server.use(cors())
-    this.server.use(express.json({limit: 10000000}))
+    this.server.use(express.json({ limit: 10000000 }))
   
   }
 

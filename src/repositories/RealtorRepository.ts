@@ -1,12 +1,13 @@
-import { CreateRealtorRequest } from '../dtos/requests/CreateRealtorRequest'
-import { SignInRealtorRequest } from '../dtos/requests/SignInRealtorRequest'
-import { UpdateRealtorRequest } from '../dtos/requests/UpdateRealtorRequest'
-import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
-import { RealtorResponse }      from '../dtos/responses/RealtorResponse'
-import { ApiError }             from '../errors/ApiError'
-import { Prisma, PrismaClient } from '@prisma/client'
-import { compare, hash }        from 'bcryptjs'
-import { sign }                 from 'jsonwebtoken'
+import { CreatePropertyRequest } from '../dtos/requests/CreatePropertyRequest'
+import { CreateRealtorRequest }  from '../dtos/requests/CreateRealtorRequest'
+import { SignInRealtorRequest }  from '../dtos/requests/SignInRealtorRequest'
+import { UpdateRealtorRequest }  from '../dtos/requests/UpdateRealtorRequest'
+import { PaginationResponse }    from '../dtos/responses/PaginationResponse'
+import { RealtorResponse }       from '../dtos/responses/RealtorResponse'
+import { ApiError }              from '../errors/ApiError'
+import { Prisma, PrismaClient }  from '@prisma/client'
+import { compare, hash }         from 'bcryptjs'
+import { sign }                  from 'jsonwebtoken'
 
 export class RealtorRepository {
 
@@ -155,6 +156,65 @@ export class RealtorRepository {
     })
 
     if (realtor) return 'deleted'
+  
+  }
+
+  public async findAllProperties(id: number) {
+
+    const { Properties } = await this.prisma.realtor.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    return Properties
+  
+  }
+
+  public async addProperty(data: CreatePropertyRequest) {
+
+    const { propertyData, realtorId } = data
+
+    const properties = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        Properties: {
+          create: propertyData
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'property added'
+  
+  }
+
+  public async removeProperty(realtorId: number, propertyId: number) {
+
+    const properties = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        Properties: {
+          delete: {
+            id: propertyId
+          }
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'property removed'
   
   }
 

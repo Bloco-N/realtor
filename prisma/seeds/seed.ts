@@ -108,10 +108,10 @@ async function main() {
   
   }
 
-  for(const item of mockServices){
+  for (const item of mockServices) {
 
     await prisma.service.create({
-      data:{
+      data: {
         title: item
       }
     })

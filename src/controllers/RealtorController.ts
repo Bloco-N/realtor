@@ -1,11 +1,12 @@
-import { CreateRealtorRequest } from '../dtos/requests/CreateRealtorRequest'
-import { ListAllRealtorsQuery } from '../dtos/requests/ListAllRealtorsQuery'
-import { UpdateRealtorRequest } from '../dtos/requests/UpdateRealtorRequest'
-import { ApiError }             from '../errors/ApiError'
-import errorHandling            from '../handlers/errorHandling'
-import { RealtorRepository }    from '../repositories/RealtorRepository'
-import { Request, Response }    from 'express'
-import { validationResult }     from 'express-validator'
+import { CreatePropertyRequest } from '../dtos/requests/CreatePropertyRequest'
+import { CreateRealtorRequest }  from '../dtos/requests/CreateRealtorRequest'
+import { ListAllRealtorsQuery }  from '../dtos/requests/ListAllRealtorsQuery'
+import { UpdateRealtorRequest }  from '../dtos/requests/UpdateRealtorRequest'
+import { ApiError }              from '../errors/ApiError'
+import errorHandling             from '../handlers/errorHandling'
+import { RealtorRepository }     from '../repositories/RealtorRepository'
+import { Request, Response }     from 'express'
+import { validationResult }      from 'express-validator'
 
 export class RealtorController {
 
@@ -108,6 +109,58 @@ export class RealtorController {
   }
 
   public async remove(req: Request, res: Response) {
+
+    try {
+
+      const { id } = req.params
+      const realtor = await this.repository.delete(Number(id))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async findAllProperties(req: Request, res: Response) {
+
+    try {
+
+      const { id } = req.params
+      const realtor = await this.repository.delete(Number(id))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async addProperty(req: Request<unknown, unknown, CreatePropertyRequest>, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addProperty(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removeProperty(req: Request, res: Response) {
 
     try {
 
