@@ -1,7 +1,14 @@
+import { Preservation, PropertyType } from '@prisma/client'
+
 export interface CreatePropertyRequest {
-  title: string
-  description: string
-  link: string
-  profilePicture: string
+  propertyData: {
+    title: string
+    link: string
+    profilePicture: string
+    realtorId: number
+    price: string
+    propertyType: PropertyType
+    preservation: Preservation
+  }
   realtorId: number
 }
