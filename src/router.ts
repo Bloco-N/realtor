@@ -1,4 +1,3 @@
-import { PropertyController }  from './controllers/PropertyController'
 import { RealtorController }   from './controllers/RealtorController'
 import { ServiceController }   from './controllers/ServiceController'
 import { Auth }                from './middlewares/Auth'
@@ -8,7 +7,6 @@ import { checkSchema }         from 'express-validator'
 
 const router = Router()
 const realtorController = new RealtorController()
-const propertyController = new PropertyController()
 const serviceController = new ServiceController()
 const auth = new Auth()
 
@@ -19,9 +17,9 @@ router.post('/realtor/sign-up', realtorController.add.bind(realtorController))
 router.put('/realtor', auth.realtorAuth, realtorController.update.bind(realtorController))
 router.delete('/realtor/:id', realtorController.remove.bind(realtorController))
 
-router.get('/property/realtor/:realtorId', propertyController.listAllByRealtorId.bind(propertyController))
-router.post('/property', propertyController.add.bind(propertyController))
-router.delete('/property/:id', auth.realtorAuth, propertyController.remove.bind(propertyController))
+router.get('/property/realtor/:realtorId', realtorController.listAllProperties.bind(realtorController))
+router.post('/property', realtorController.addProperty.bind(realtorController))
+router.delete('/property/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
 
 router.get('/service', serviceController.listAll.bind(serviceController))
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))

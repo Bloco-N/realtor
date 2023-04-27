@@ -125,12 +125,12 @@ export class RealtorController {
   
   }
 
-  public async findAllProperties(req: Request, res: Response) {
+  public async listAllProperties(req: Request, res: Response) {
 
     try {
 
-      const { id } = req.params
-      const realtor = await this.repository.delete(Number(id))
+      const { realtorId } = req.params
+      const realtor = await this.repository.findAllProperties(Number(realtorId))
 
       res.status(200).send(realtor)
     
@@ -164,8 +164,9 @@ export class RealtorController {
 
     try {
 
-      const { id } = req.params
-      const realtor = await this.repository.delete(Number(id))
+      const { propertyId } = req.params
+      const { user: { id } } = req.body
+      const realtor = await this.repository.deleteProperty(Number(id), Number(propertyId))
 
       res.status(200).send(realtor)
     

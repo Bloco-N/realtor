@@ -192,11 +192,11 @@ export class RealtorRepository {
       }
     })
 
-    if (properties) return 'property added'
+    if (properties) return 'created'
   
   }
 
-  public async removeProperty(realtorId: number, propertyId: number) {
+  public async deleteProperty(realtorId: number, propertyId: number) {
 
     const properties = await this.prisma.realtor.update({
       where: {
@@ -214,7 +214,7 @@ export class RealtorRepository {
       }
     })
 
-    if (properties) return 'property removed'
+    if (properties) return 'deleted'
   
   }
 
