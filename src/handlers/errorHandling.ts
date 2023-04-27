@@ -3,6 +3,8 @@ import { Response } from 'express'
 
 const errorHandling = (res: Response, error: Error) => {
 
+  console.log(error)
+
   if (error instanceof ApiError) {
 
     res.status(error.status).send(error.message)
