@@ -92,7 +92,7 @@ model Agency {
   twitter            String?
   professional_email String?
   website            String?
-  addressId          Int
+  addressId          Int?
   Address            Address?         @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
