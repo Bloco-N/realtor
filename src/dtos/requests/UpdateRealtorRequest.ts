@@ -10,6 +10,8 @@ export interface UpdateRealtorRequest {
   facebook?: string | null
   professional_email?: string | null
   website?: string | null
+  coverPicture?: string | null
+  profilePicture?: string | null
   user: {
     id: number
     email: string

@@ -27,7 +27,8 @@ export class RealtorRepository {
     professional_email: true,
     website: true,
     profilePicture: true,
-    expTime: true
+    expTime: true,
+    coverPicture: true
   }
   private where = (search: string): Prisma.RealtorWhereInput =>
     search

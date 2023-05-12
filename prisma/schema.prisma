@@ -61,6 +61,7 @@ model Realtor {
   firstName          String
   lastName           String
   profilePicture     String?
+  coverPicture       String?
   introduction       String?
   phone              String?
   whatsapp           String?
