@@ -65,12 +65,14 @@ model Realtor {
   phone              String?
   whatsapp           String?
   instagram          String?
-  twitter            String?
+  facebook           String?
   professional_email String?
   website            String?
+  expTime            Int?
   RealtorServices    RealtorService[]
   Partnerships       Partnership[]
   Awards             Award[]
+  Courses            Course[]
   Sales              Sale[]
   Comments           Comment[]
   Properties         Property[]
@@ -89,7 +91,7 @@ model Agency {
   phone              String?
   whatsapp           String?
   instagram          String?
-  twitter            String?
+  facebook           String?
   professional_email String?
   website            String?
   addressId          Int?
@@ -143,7 +145,8 @@ model Language {
 model Course {
   id          Int    @id @default(autoincrement())
   name        String
-  description String
+  realtorId   Int
+  Realtor     Realtor @relation(fields: [realtorId], references: [id])
 
   @@map("courses")
 }
@@ -184,11 +187,12 @@ model Partnership {
   id        Int       @id @default(autoincrement())
   init      DateTime
   end       DateTime?
+  agency    String
   active    Boolean   @default(false)
   Realtor   Realtor   @relation(fields: [realtorId], references: [id])
-  Agency    Agency    @relation(fields: [agencyId], references: [id])
+  Agency    Agency?    @relation(fields: [agencyId], references: [id])
   realtorId Int
-  agencyId  Int
+  agencyId  Int?
 
   @@map("partnerships")
 }

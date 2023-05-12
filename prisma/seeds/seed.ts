@@ -88,7 +88,8 @@ const mockServices = [
   'Acompanhamento para compra de imóvel',
   'Venda de imóvel',
   'Seleção de inquilino e gestão de arrendamento',
-  'Seleção de inquilino'
+  'Seleção de inquilino',
+  'Realocation'
 ]
 
 async function main() {

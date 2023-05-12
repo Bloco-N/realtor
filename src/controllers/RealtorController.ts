@@ -1,3 +1,5 @@
+import { CreateAwardRequest }    from '../dtos/requests/CreateAwardRequest'
+import { CreateCourseRequest }   from '../dtos/requests/CreateCourseRequest'
 import { CreatePropertyRequest } from '../dtos/requests/CreatePropertyRequest'
 import { CreateRealtorRequest }  from '../dtos/requests/CreateRealtorRequest'
 import { ListAllRealtorsQuery }  from '../dtos/requests/ListAllRealtorsQuery'
@@ -130,9 +132,9 @@ export class RealtorController {
     try {
 
       const { realtorId } = req.params
-      const realtor = await this.repository.findAllProperties(Number(realtorId))
+      const properties = await this.repository.findAllProperties(Number(realtorId))
 
-      res.status(200).send(realtor)
+      res.status(200).send(properties)
     
     } catch (error) {
 
@@ -167,6 +169,112 @@ export class RealtorController {
       const { propertyId } = req.params
       const { user: { id } } = req.body
       const realtor = await this.repository.deleteProperty(Number(id), Number(propertyId))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async listAllAwards(req:Request, res:Response){
+
+    try {
+      
+      const { realtorId } = req.params
+      const awards = await this.repository.findAllAwards(Number(realtorId))
+
+      res.status(200).send(awards)
+
+    } catch (error) {
+      
+      errorHandling(res, error)
+
+    }
+  
+  }
+
+  public async addAward(req: Request<unknown, unknown, CreateAwardRequest>, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addAward(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removeAward(req: Request, res: Response) {
+
+    try {
+
+      const { awardId } = req.params
+      const { user: { id } } = req.body
+      const realtor = await this.repository.deleteAward(Number(id), Number(awardId))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async listAllCourses(req:Request, res:Response){
+
+    try {
+      
+      const { realtorId } = req.params
+      const courses = await this.repository.findAllCourses(Number(realtorId))
+
+      res.status(200).send(courses)
+
+    } catch (error) {
+      
+      errorHandling(res, error)
+
+    }
+  
+  }
+
+  public async addCourse(req: Request<unknown, unknown, CreateCourseRequest>, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addCourse(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removeCourse(req: Request, res: Response) {
+
+    try {
+
+      const { courseId } = req.params
+      const { user: { id } } = req.body
+      const realtor = await this.repository.deleteCourse(Number(id), Number(courseId))
 
       res.status(200).send(realtor)
     

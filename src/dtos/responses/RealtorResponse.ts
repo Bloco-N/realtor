@@ -7,7 +7,7 @@ export interface RealtorResponse {
   phone: string | null
   whatsapp: string | null
   instagram: string | null
-  twitter: string | null
+  facebook: string | null
   professional_email: string | null
   website: string | null
 }

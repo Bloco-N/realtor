@@ -39,6 +39,14 @@ router.get('/property/realtor/:realtorId', realtorController.listAllProperties.b
 router.post('/property', realtorController.addProperty.bind(realtorController))
 router.delete('/property/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
 
+router.get('/award/realtor/:realtorId', realtorController.listAllAwards.bind(realtorController))
+router.post('/award', realtorController.addAward.bind(realtorController))
+router.delete('/award/:awardId', auth.realtorAuth, realtorController.removeAward.bind(realtorController))
+
+router.get('/course/realtor/:realtorId', realtorController.listAllCourses.bind(realtorController))
+router.post('/course', realtorController.addCourse.bind(realtorController))
+router.delete('/course/:courseId', auth.realtorAuth, realtorController.removeCourse.bind(realtorController))
+
 router.get('/service', serviceController.listAll.bind(serviceController))
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))
 router.post('/service/realtor', serviceController.createRealtorService.bind(serviceController))
