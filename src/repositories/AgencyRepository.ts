@@ -22,9 +22,9 @@ export class AgencyRepository {
     professional_email: true,
     website: true,
     profilePicture: true,
-    coverPicture:true,
+    coverPicture: true,
     phoneCountry: true,
-    wppCountry: true,
+    wppCountry: true
   }
 
   private where = (search: string): Prisma.AgencyWhereInput =>

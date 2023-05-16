@@ -1,6 +1,6 @@
-import { AgencyResponse }     from "../../src/dtos/responses/AgencyResponse";
-import { PaginationResponse } from "../../src/dtos/responses/PaginationResponse";
-import { AgencyRepository }   from "../../src/repositories/AgencyRepository";
+import { AgencyResponse }     from '../../src/dtos/responses/AgencyResponse'
+import { PaginationResponse } from '../../src/dtos/responses/PaginationResponse'
+import { AgencyRepository }   from '../../src/repositories/AgencyRepository'
 
 const agencyRepository = new AgencyRepository()
 
@@ -17,7 +17,7 @@ describe('AgencyRepository unit tests', () => {
         password: `agencyPassword${n + 1}`
       }))
     })
-
+  
   })
 
   test('should find all agencies', async () => {
@@ -26,7 +26,7 @@ describe('AgencyRepository unit tests', () => {
 
     expect(agencies).toBeDefined()
     expect(agencies).toBeInstanceOf(PaginationResponse<AgencyResponse>)
-
+  
   })
 
   test('should find all agencies, second page', async () => {
@@ -36,7 +36,7 @@ describe('AgencyRepository unit tests', () => {
     expect(agencies).toBeInstanceOf(PaginationResponse<AgencyRepository>)
     expect(agencies.list).toBeInstanceOf(Array<AgencyResponse>)
     expect(agencies.list.length).toBe(5)
-
+  
   })
 
   test('should create a agencie', async () => {
@@ -49,7 +49,7 @@ describe('AgencyRepository unit tests', () => {
 
     expect(created).toBeDefined()
     expect(created).toBe('created')
-
+  
   })
 
   test('should find a agency by id', async () => {
@@ -60,7 +60,7 @@ describe('AgencyRepository unit tests', () => {
     expect(agency.id).toBe(16)
     expect(agency.name).toBe('agency16')
     expect(agency.email).toBe('agency16@email.com')
-
+  
   })
 
   test('should update a realtor by id', async () => {
@@ -82,7 +82,7 @@ describe('AgencyRepository unit tests', () => {
     expect(agencyUpdated).toBeDefined()
     expect(agencyUpdated.id).toBe(16)
     expect(agencyUpdated.name).toBe('agency alterado')
-
+  
   })
 
 })

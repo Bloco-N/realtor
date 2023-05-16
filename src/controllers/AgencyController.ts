@@ -63,7 +63,7 @@ export class AgencyController {
     try {
 
       const { id } = req.params
-        
+
       const agency = await this.repository.get(Number(id))
 
       res.status(200).send(agency)

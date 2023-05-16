@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-import { App }          from "../../src/app"
+import { App }          from '../../src/app'
+import { PrismaClient } from '@prisma/client'
 import request          from 'supertest'
 
 const app = new App(8081)
@@ -19,7 +19,7 @@ describe('agencyController test', () => {
         password: `agencyPassword${n + 1}`
       }))
     })
-
+  
   })
 
   test('should get with status 200 in /agency', async () => {
@@ -33,7 +33,7 @@ describe('agencyController test', () => {
     expect(body.totalOfPages).toBe(2)
     expect(response.body.list.length).toBe(10)
     expect(response.statusCode).toBe(200)
-
+  
   })
 
   test('should get with status 200 the second page in /agency', async () => {
@@ -49,7 +49,7 @@ describe('agencyController test', () => {
     expect(body.totalOfPages).toBe(2)
     expect(response.body.list.length).toBe(5)
     expect(response.statusCode).toBe(200)
-
+  
   })
 
   test('should get with status 200 one agency by id ', async () => {
@@ -62,7 +62,7 @@ describe('agencyController test', () => {
     expect(body.id).toBe(1)
     expect(body.email).toBe('agency1@email.com')
     expect(response.statusCode).toBe(200)
-
+  
   })
 
   test('should get status 404, not found', async () => {
@@ -74,7 +74,7 @@ describe('agencyController test', () => {
     expect(text).toBeDefined()
     expect(text).toBe('agency not found')
     expect(response.statusCode).toBe(404)
-
+  
   })
 
   test('should add one agency with status 201', async () => {
@@ -92,7 +92,7 @@ describe('agencyController test', () => {
     expect(text).toBeDefined()
     expect(text).toBe('created')
     expect(response.statusCode).toBe(201)
-
+  
   })
 
   test('should sign in one agency with status 200', async () => {
@@ -122,7 +122,7 @@ describe('agencyController test', () => {
 
     expect(text).toBeDefined()
     expect(response.statusCode).toBe(200)
-
+  
   })
 
   test('should update one agency with status 200', async () => {
@@ -160,16 +160,14 @@ describe('agencyController test', () => {
       }
     }
 
-    const response = await request(app.server)
-      .put('/agency')
-      .send(agencyUpdate)
+    const response = await request(app.server).put('/agency').send(agencyUpdate)
 
     const { text } = response
 
     expect(text).toBeDefined()
     expect(text).toBe('updated')
     expect(response.statusCode).toBe(200)
-
+  
   })
 
   test('should delete one agency with status 200', async () => {
@@ -177,11 +175,11 @@ describe('agencyController test', () => {
     const response = await request(app.server).delete('/agency/14')
 
     const { text } = response
- 
+
     expect(text).toBeDefined()
     expect(text).toBe('deleted')
     expect(response.statusCode).toBe(200)
-
+  
   })
 
 })
