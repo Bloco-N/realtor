@@ -71,7 +71,7 @@ export class AgencyRepository {
 
     const { password, email } = data
 
-    const { password: actualPassword, ...agency } = await this.prisma.agency.findUnique({
+    const agency = await this.prisma.agency.findUnique({
       where: {
         email
       },
@@ -83,11 +83,11 @@ export class AgencyRepository {
       }
     })
 
-    if (!agency) throw new ApiError(404, 'agency not found')
+    if (!agency) throw new ApiError(400, 'agency or password incorrect')
 
-    const match = await compare(password, actualPassword)
+    const match = await compare(password, agency.password)
 
-    if (!match) throw new ApiError(400, 'password incorrect')
+    if (!match) throw new ApiError(400, 'agency or password incorrect')
 
     const token = sign(agency, process.env.API_SECRET, {
       expiresIn: '8h'
