@@ -19,9 +19,12 @@ export class AgencyRepository {
     phone: true,
     whatsapp: true,
     instagram: true,
-    twitter: true,
     professional_email: true,
-    website: true
+    website: true,
+    profilePicture: true,
+    coverPicture:true,
+    phoneCountry: true,
+    wppCountry: true,
   }
 
   private where = (search: string): Prisma.AgencyWhereInput =>

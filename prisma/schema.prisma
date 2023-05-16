@@ -65,6 +65,8 @@ model Realtor {
   introduction       String?
   phone              String?
   whatsapp           String?
+  phoneCountry       String?
+  wppCountry         String?
   instagram          String?
   facebook           String?
   professional_email String?
@@ -88,6 +90,10 @@ model Agency {
   email              String           @unique
   password           String
   name               String
+  profilePicture     String?
+  coverPicture       String?
+  phoneCountry       String?
+  wppCountry         String?
   description        String?
   phone              String?
   whatsapp           String?

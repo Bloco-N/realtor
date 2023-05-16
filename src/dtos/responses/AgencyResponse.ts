@@ -6,7 +6,6 @@ export interface AgencyResponse {
   phone: string
   whatsapp: string
   instagram: string
-  twitter: string
   professional_email: string
   website: string
 }

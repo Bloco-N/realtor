@@ -25,7 +25,7 @@ router.get('/agency', agencyController.listAll.bind(agencyController))
 router.get('/agency/:id', agencyController.get.bind(agencyController))
 router.post('/agency/sign-in', agencyController.signIn.bind(agencyController))
 router.post('/agency/sign-up', agencyController.add.bind(agencyController))
-router.put('/agency', agencyController.update.bind(agencyController))
+router.put('/agency', auth.realtorAuth, agencyController.update.bind(agencyController))
 router.delete('/agency/:id', agencyController.remove.bind(agencyController))
 
 router.get('/client', clientController.listAll.bind(clientController))
