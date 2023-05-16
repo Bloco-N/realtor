@@ -150,10 +150,10 @@ model Language {
 }
 
 model Course {
-  id          Int    @id @default(autoincrement())
-  name        String
-  realtorId   Int
-  Realtor     Realtor @relation(fields: [realtorId], references: [id])
+  id        Int     @id @default(autoincrement())
+  name      String
+  realtorId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
 
   @@map("courses")
 }
@@ -192,12 +192,13 @@ model Award {
 
 model Partnership {
   id        Int       @id @default(autoincrement())
+  title     String
   init      DateTime
   end       DateTime?
   agency    String
   active    Boolean   @default(false)
   Realtor   Realtor   @relation(fields: [realtorId], references: [id])
-  Agency    Agency?    @relation(fields: [agencyId], references: [id])
+  Agency    Agency?   @relation(fields: [agencyId], references: [id])
   realtorId Int
   agencyId  Int?
 

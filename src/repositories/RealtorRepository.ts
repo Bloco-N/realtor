@@ -1,15 +1,16 @@
-import { CreateAwardRequest }    from '../dtos/requests/CreateAwardRequest'
-import { CreateCourseRequest }   from '../dtos/requests/CreateCourseRequest'
-import { CreatePropertyRequest } from '../dtos/requests/CreatePropertyRequest'
-import { CreateRealtorRequest }  from '../dtos/requests/CreateRealtorRequest'
-import { SignInRealtorRequest }  from '../dtos/requests/SignInRealtorRequest'
-import { UpdateRealtorRequest }  from '../dtos/requests/UpdateRealtorRequest'
-import { PaginationResponse }    from '../dtos/responses/PaginationResponse'
-import { RealtorResponse }       from '../dtos/responses/RealtorResponse'
-import { ApiError }              from '../errors/ApiError'
-import { Prisma, PrismaClient }  from '@prisma/client'
-import { compare, hash }         from 'bcryptjs'
-import { sign }                  from 'jsonwebtoken'
+import { CreateAwardRequest }       from '../dtos/requests/CreateAwardRequest'
+import { CreateCourseRequest }      from '../dtos/requests/CreateCourseRequest'
+import { CreatePartnershipRequest } from '../dtos/requests/CreatePartnershipRequest'
+import { CreatePropertyRequest }    from '../dtos/requests/CreatePropertyRequest'
+import { CreateRealtorRequest }     from '../dtos/requests/CreateRealtorRequest'
+import { SignInRealtorRequest }     from '../dtos/requests/SignInRealtorRequest'
+import { UpdateRealtorRequest }     from '../dtos/requests/UpdateRealtorRequest'
+import { PaginationResponse }       from '../dtos/responses/PaginationResponse'
+import { RealtorResponse }          from '../dtos/responses/RealtorResponse'
+import { ApiError }                 from '../errors/ApiError'
+import { Prisma, PrismaClient }     from '@prisma/client'
+import { compare, hash }            from 'bcryptjs'
+import { sign }                     from 'jsonwebtoken'
 
 export class RealtorRepository {
 
@@ -30,7 +31,7 @@ export class RealtorRepository {
     expTime: true,
     coverPicture: true,
     phoneCountry: true,
-    wppCountry: true,
+    wppCountry: true
   }
   private where = (search: string): Prisma.RealtorWhereInput =>
     search
@@ -239,48 +240,48 @@ export class RealtorRepository {
   
   }
 
-  public async addAward(data:CreateAwardRequest){
+  public async addAward(data: CreateAwardRequest) {
 
-    const { realtorId, ...awardData} = data
+    const { realtorId, ...awardData } = data
 
     const awards = await this.prisma.realtor.update({
-      where:{
+      where: {
         id: realtorId
       },
-      data:{
-        Awards:{
+      data: {
+        Awards: {
           create: awardData
         }
       },
-      select:{
+      select: {
         Awards: true
       }
     })
 
-    if(awards) return 'created'
-
+    if (awards) return 'created'
+  
   }
 
-  public async deleteAward(realtorId:number, awardId:number){
+  public async deleteAward(realtorId: number, awardId: number) {
 
     const awards = await this.prisma.realtor.update({
-      where:{
+      where: {
         id: realtorId
       },
-      data:{
-        Awards:{
+      data: {
+        Awards: {
           delete: {
             id: awardId
           }
         }
       },
-      select:{
+      select: {
         Awards: true
       }
     })
 
-    if(awards) return 'deleted'
-
+    if (awards) return 'deleted'
+  
   }
 
   public async findAllCourses(id: number) {
@@ -298,48 +299,137 @@ export class RealtorRepository {
   
   }
 
-  public async addCourse(data:CreateCourseRequest){
+  public async addCourse(data: CreateCourseRequest) {
 
-    const { realtorId, ...courseData} = data
+    const { realtorId, ...courseData } = data
 
     const courses = await this.prisma.realtor.update({
-      where:{
+      where: {
         id: realtorId
       },
-      data:{
-        Courses:{
+      data: {
+        Courses: {
           create: courseData
         }
       },
-      select:{
+      select: {
         Courses: true
       }
     })
 
-    if(courses) return 'created'
-
+    if (courses) return 'created'
+  
   }
 
-  public async deleteCourse(realtorId:number, courseId:number){
+  public async deleteCourse(realtorId: number, courseId: number) {
 
     const courses = await this.prisma.realtor.update({
-      where:{
+      where: {
         id: realtorId
       },
-      data:{
-        Courses:{
+      data: {
+        Courses: {
           delete: {
             id: courseId
           }
         }
       },
-      select:{
+      select: {
         Courses: true
       }
     })
 
-    if(courses) return 'deleted'
+    if (courses) return 'deleted'
+  
+  }
 
+  public async findAllPartnerships(id: number) {
+
+    const { Partnerships } = await this.prisma.realtor.findUnique({
+      where: { id },
+      select: {
+        Partnerships: true
+      }
+    })
+
+    const agencies = Partnerships.map((partnership) => partnership.agency)
+
+    const uniqueAgencies = [...new Set(agencies)]
+
+    const agenciesPartnerships = uniqueAgencies.map((agency) => Partnerships.filter((partnership) => partnership.agency === agency))
+
+    return agenciesPartnerships.map((agenciePartnerships) =>
+      agenciePartnerships.map((partnership) => {
+
+        const initDate = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
+        const endDate = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+
+        const end = partnership.end ? partnership.end.getTime() : Date.now()
+
+        const period = ((end - partnership.init.getTime()) / 1000) * 60 * 60 * 24 * 30
+
+        const workTime = `${initDate} - ${endDate} - ${Math.floor(period)}`
+
+        return {
+          title: partnership.title,
+          agency: partnership.agency,
+          workTime: workTime
+        }
+      
+      }))
+  
+  }
+
+  public async addPartnership(data: CreatePartnershipRequest) {
+
+    const { realtorId, ...partnerShipData } = data
+
+    const agency = await this.prisma.agency.findUnique({
+      where: {
+        name: partnerShipData.agency
+      }
+    })
+
+    const agencyId = agency ? agency.id : undefined
+
+    const added = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        Partnerships: {
+          create: {
+            title: partnerShipData.title,
+            agency: partnerShipData.agency,
+            init: new Date(partnerShipData.init),
+            end: new Date(partnerShipData.end),
+            agencyId
+          }
+        }
+      }
+    })
+
+    if (added) return 'added'
+  
+  }
+
+  public async deletePartnership(realtorId: number, partnershipId: number) {
+
+    const deleted = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        Partnerships: {
+          delete: {
+            id: partnershipId
+          }
+        }
+      }
+    })
+
+    if (deleted) return 'deleted'
+  
   }
 
 }

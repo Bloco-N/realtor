@@ -1,14 +1,15 @@
-import { CreateAwardRequest }    from '../dtos/requests/CreateAwardRequest'
-import { CreateCourseRequest }   from '../dtos/requests/CreateCourseRequest'
-import { CreatePropertyRequest } from '../dtos/requests/CreatePropertyRequest'
-import { CreateRealtorRequest }  from '../dtos/requests/CreateRealtorRequest'
-import { ListAllRealtorsQuery }  from '../dtos/requests/ListAllRealtorsQuery'
-import { UpdateRealtorRequest }  from '../dtos/requests/UpdateRealtorRequest'
-import { ApiError }              from '../errors/ApiError'
-import errorHandling             from '../handlers/errorHandling'
-import { RealtorRepository }     from '../repositories/RealtorRepository'
-import { Request, Response }     from 'express'
-import { validationResult }      from 'express-validator'
+import { CreateAwardRequest }       from '../dtos/requests/CreateAwardRequest'
+import { CreateCourseRequest }      from '../dtos/requests/CreateCourseRequest'
+import { CreatePartnershipRequest } from '../dtos/requests/CreatePartnershipRequest'
+import { CreatePropertyRequest }    from '../dtos/requests/CreatePropertyRequest'
+import { CreateRealtorRequest }     from '../dtos/requests/CreateRealtorRequest'
+import { ListAllRealtorsQuery }     from '../dtos/requests/ListAllRealtorsQuery'
+import { UpdateRealtorRequest }     from '../dtos/requests/UpdateRealtorRequest'
+import { ApiError }                 from '../errors/ApiError'
+import errorHandling                from '../handlers/errorHandling'
+import { RealtorRepository }        from '../repositories/RealtorRepository'
+import { Request, Response }        from 'express'
+import { validationResult }         from 'express-validator'
 
 export class RealtorController {
 
@@ -167,7 +168,9 @@ export class RealtorController {
     try {
 
       const { propertyId } = req.params
-      const { user: { id } } = req.body
+      const {
+        user: { id }
+      } = req.body
       const realtor = await this.repository.deleteProperty(Number(id), Number(propertyId))
 
       res.status(200).send(realtor)
@@ -180,19 +183,19 @@ export class RealtorController {
   
   }
 
-  public async listAllAwards(req:Request, res:Response){
+  public async listAllAwards(req: Request, res: Response) {
 
     try {
-      
+
       const { realtorId } = req.params
       const awards = await this.repository.findAllAwards(Number(realtorId))
 
       res.status(200).send(awards)
-
+    
     } catch (error) {
-      
-      errorHandling(res, error)
 
+      errorHandling(res, error)
+    
     }
   
   }
@@ -220,7 +223,9 @@ export class RealtorController {
     try {
 
       const { awardId } = req.params
-      const { user: { id } } = req.body
+      const {
+        user: { id }
+      } = req.body
       const realtor = await this.repository.deleteAward(Number(id), Number(awardId))
 
       res.status(200).send(realtor)
@@ -233,19 +238,19 @@ export class RealtorController {
   
   }
 
-  public async listAllCourses(req:Request, res:Response){
+  public async listAllCourses(req: Request, res: Response) {
 
     try {
-      
+
       const { realtorId } = req.params
       const courses = await this.repository.findAllCourses(Number(realtorId))
 
       res.status(200).send(courses)
-
+    
     } catch (error) {
-      
-      errorHandling(res, error)
 
+      errorHandling(res, error)
+    
     }
   
   }
@@ -273,8 +278,65 @@ export class RealtorController {
     try {
 
       const { courseId } = req.params
-      const { user: { id } } = req.body
+      const {
+        user: { id }
+      } = req.body
       const realtor = await this.repository.deleteCourse(Number(id), Number(courseId))
+
+      res.status(200).send(realtor)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async listAllPartnership(req: Request, res: Response) {
+
+    try {
+
+      const { realtorId } = req.params
+      const partnerships = await this.repository.findAllPartnerships(Number(realtorId))
+
+      res.status(200).send(partnerships)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async addPartnership(req: Request<unknown, unknown, CreatePartnershipRequest>, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addPartnership(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removePartnerShip(req: Request, res: Response) {
+
+    try {
+
+      const { partnershipId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const realtor = await this.repository.deletePartnership(Number(id), Number(partnershipId))
 
       res.status(200).send(realtor)
     
