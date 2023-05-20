@@ -60,6 +60,7 @@ model Realtor {
   password           String
   firstName          String
   lastName           String
+  wppText            String?
   profilePicture     String?
   coverPicture       String?
   introduction       String?
@@ -89,7 +90,8 @@ model Agency {
   id                 Int              @id @default(autoincrement())
   email              String           @unique
   password           String
-  name               String
+  name               String           @unique
+  wppText            String?
   profilePicture     String?
   coverPicture       String?
   phoneCountry       String?
@@ -174,7 +176,10 @@ model Comment {
   realtorId Int
   clientId  Int
   text      String
-  rating    Float
+  marketExpertiseRating               Float
+  responsivenessRating                Float
+  negotiationSkillsRating             Float
+  profissionalisAndComunicationRating Float
   Realtor   Realtor @relation(fields: [realtorId], references: [id])
   Client    Client  @relation(fields: [clientId], references: [id])
 

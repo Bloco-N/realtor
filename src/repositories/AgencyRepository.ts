@@ -24,7 +24,8 @@ export class AgencyRepository {
     profilePicture: true,
     coverPicture: true,
     phoneCountry: true,
-    wppCountry: true
+    wppCountry: true,
+    wppText: true
   }
 
   private where = (search: string): Prisma.AgencyWhereInput =>
@@ -51,6 +52,13 @@ export class AgencyRepository {
     })
 
     return new PaginationResponse<AgencyResponse>(agencies, page, Math.ceil(totalOfAgencies / take))
+  
+  }
+
+  public async findAllWithOutPagination(){
+
+    const agencies = await this.prisma.agency.findMany()
+    return agencies
   
   }
 

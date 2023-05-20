@@ -40,6 +40,14 @@ export class AgencyController {
   
   }
 
+  public async listAllWithoutPagination (req: Request, res: Response){
+
+    const agencies = await this.repository.findAllWithOutPagination()
+
+    res.status(200).send(agencies)
+  
+  }
+
   public async signIn(req: Request, res: Response) {
 
     try {

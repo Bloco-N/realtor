@@ -348,4 +348,21 @@ export class RealtorController {
   
   }
 
+  public async listAllComments(req: Request, res: Response) {
+
+    try {
+
+      const { realtorId } = req.params
+      const comments = await this.repository.findAllComments(Number(realtorId))
+
+      res.status(200).send(comments)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
 }

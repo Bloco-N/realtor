@@ -11,6 +11,7 @@ import { ApiError }                 from '../errors/ApiError'
 import { Prisma, PrismaClient }     from '@prisma/client'
 import { compare, hash }            from 'bcryptjs'
 import { sign }                     from 'jsonwebtoken'
+import { timeSince }                from '../utils/timeSince'
 
 export class RealtorRepository {
 
@@ -31,7 +32,8 @@ export class RealtorRepository {
     expTime: true,
     coverPicture: true,
     phoneCountry: true,
-    wppCountry: true
+    wppCountry: true,
+    wppText: true
   }
   private where = (search: string): Prisma.RealtorWhereInput =>
     search
@@ -348,8 +350,12 @@ export class RealtorRepository {
     const { Partnerships } = await this.prisma.realtor.findUnique({
       where: { id },
       select: {
-        Partnerships: true
-      }
+        Partnerships: {
+          include:{
+            Agency: true
+          }
+        }
+      },
     })
 
     const agencies = Partnerships.map((partnership) => partnership.agency)
@@ -358,25 +364,40 @@ export class RealtorRepository {
 
     const agenciesPartnerships = uniqueAgencies.map((agency) => Partnerships.filter((partnership) => partnership.agency === agency))
 
-    return agenciesPartnerships.map((agenciePartnerships) =>
-      agenciePartnerships.map((partnership) => {
+    return agenciesPartnerships.map((agenciePartnerships) => {
 
-        const initDate = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
-        const endDate = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+      return{
+        list: agenciePartnerships.map((partnership) => {
+  
+          const initDate = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
+          const endDate = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+  
+          // const end = partnership.end ? partnership.end.getTime() : Date.now()
+  
+          // const period = ((end - partnership.init.getTime()) / 1000) * 60 * 60 * 24 * 30
+          let period = ''
+          period = timeSince(partnership.init)
+          if(partnership.end){
+  
+            period = timeSince(partnership.init, partnership.end)
+          
+          }
+          const workTime = `${initDate} - ${endDate} - ${period}`
+  
+          return {
+            id: partnership.id,
+            title: partnership.title,
+            agency: partnership.agency,
+            workTime: workTime
+          }
+        
+        }),
+        name: agenciePartnerships[0].agency,
+        pic: agenciePartnerships[0].Agency?.profilePicture ? agenciePartnerships[0].Agency.profilePicture : null
 
-        const end = partnership.end ? partnership.end.getTime() : Date.now()
-
-        const period = ((end - partnership.init.getTime()) / 1000) * 60 * 60 * 24 * 30
-
-        const workTime = `${initDate} - ${endDate} - ${Math.floor(period)}`
-
-        return {
-          title: partnership.title,
-          agency: partnership.agency,
-          workTime: workTime
-        }
-      
-      }))
+      }
+    
+    })
   
   }
 
@@ -409,7 +430,7 @@ export class RealtorRepository {
       }
     })
 
-    if (added) return 'added'
+    if (added) return 'updated'
   
   }
 
@@ -429,6 +450,31 @@ export class RealtorRepository {
     })
 
     if (deleted) return 'deleted'
+  
+  }
+
+  public async findAllComments(id: number) {
+
+    const { Comments } = await this.prisma.realtor.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Comments: true
+      }
+    })
+
+    const averageComments = Comments.map((comment) => {
+
+      return {
+        id: comment.id,
+        rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalisAndComunicationRating + comment.responsivenessRating) / 4,
+        text: comment.text
+      }
+    
+    })
+
+    return averageComments
   
   }
 

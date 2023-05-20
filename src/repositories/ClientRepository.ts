@@ -1,4 +1,5 @@
 import { CreateClientRequest }  from '../dtos/requests/CreateClientRequest'
+import { CreateCommentRequest } from '../dtos/requests/CreateCommentRequest'
 import { SignInClientRequest }  from '../dtos/requests/SingInClientRequest'
 import { UpdateClientRequest }  from '../dtos/requests/UpdateClientRequest'
 import { ClientResponse }       from '../dtos/responses/ClientResponse'
@@ -149,6 +150,35 @@ export class ClientRepository {
 
     if (client) return 'deleted'
   
+  }
+
+  public async addComment(data: CreateCommentRequest){
+
+    const comment = this.prisma.comment.create({
+      data
+    })
+
+    if(comment) return 'created'
+  
+  }
+
+  public async deleteComment(clientId: number, commentId: number){
+
+    const deleted = this.prisma.client.update({
+      where:{
+        id: clientId
+      },
+      data:{
+        Comment:{
+          delete:{
+            id: commentId
+          }
+        }
+      }
+    })
+
+    if(deleted) return 'deleted'
+
   }
 
 }

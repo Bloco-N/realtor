@@ -22,6 +22,7 @@ router.put('/realtor', auth.realtorAuth, realtorController.update.bind(realtorCo
 router.delete('/realtor/:id', realtorController.remove.bind(realtorController))
 
 router.get('/agency', agencyController.listAll.bind(agencyController))
+router.get('/agency/no-pagination', agencyController.listAllWithoutPagination.bind(agencyController))
 router.get('/agency/:id', agencyController.get.bind(agencyController))
 router.post('/agency/sign-in', agencyController.signIn.bind(agencyController))
 router.post('/agency/sign-up', agencyController.add.bind(agencyController))
@@ -32,7 +33,7 @@ router.get('/client', clientController.listAll.bind(clientController))
 router.get('/client/:id', clientController.get.bind(clientController))
 router.post('/client/sign-in', clientController.signIn.bind(clientController))
 router.post('/client/sign-up', clientController.add.bind(clientController))
-router.put('/client', clientController.update.bind(clientController))
+router.put('/client', auth.realtorAuth, clientController.update.bind(clientController))
 router.delete('/client/:id', clientController.remove.bind(clientController))
 
 router.get('/property/realtor/:realtorId', realtorController.listAllProperties.bind(realtorController))
@@ -50,6 +51,10 @@ router.delete('/course/:courseId', auth.realtorAuth, realtorController.removeCou
 router.get('/partnership/realtor/:realtorId', realtorController.listAllPartnership.bind(realtorController))
 router.post('/partnership', realtorController.addPartnership.bind(realtorController))
 router.delete('/partnership/:partnershipId', auth.realtorAuth, realtorController.removePartnerShip.bind(realtorController))
+
+router.get('/comment/realtor/:realtorId', realtorController.listAllComments.bind(realtorController))
+router.post('/comment', clientController.addComment.bind(realtorController))
+router.delete('/comment/:commentId', auth.realtorAuth, clientController.removeComment.bind(realtorController))
 
 router.get('/service', serviceController.listAll.bind(serviceController))
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))
