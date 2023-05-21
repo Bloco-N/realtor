@@ -17,6 +17,31 @@ enum Fluency {
   NATIVE
 }
 
+enum PropertyType {
+  HOME
+  APARTMENT
+  NEW_BUILDING
+  OFFICE
+  COMMERCIAL
+  GARAGE
+  LAND
+  BUILDING
+  COLLECTION
+}
+
+enum Rooms {
+  T1
+  T2
+  T3
+  T4_PLUS
+}
+
+enum Preservation {
+  NEW_BUILDING
+  GOOD
+  TO_RECOVER
+}
+
 model Client {
   id        Int       @id @default(autoincrement())
   email     String    @unique
@@ -35,15 +60,23 @@ model Realtor {
   password           String
   firstName          String
   lastName           String
+  wppText            String?
+  profilePicture     String?
+  coverPicture       String?
   introduction       String?
   phone              String?
   whatsapp           String?
+  phoneCountry       String?
+  wppCountry         String?
   instagram          String?
-  twitter            String?
+  facebook           String?
   professional_email String?
   website            String?
+  expTime            Int?
+  RealtorServices    RealtorService[]
   Partnerships       Partnership[]
   Awards             Award[]
+  Courses            Course[]
   Sales              Sale[]
   Comments           Comment[]
   Properties         Property[]
@@ -57,16 +90,21 @@ model Agency {
   id                 Int              @id @default(autoincrement())
   email              String           @unique
   password           String
-  name               String
+  name               String           @unique
+  wppText            String?
+  profilePicture     String?
+  coverPicture       String?
+  phoneCountry       String?
+  wppCountry         String?
   description        String?
   phone              String?
   whatsapp           String?
   instagram          String?
-  twitter            String?
+  facebook           String?
   professional_email String?
   website            String?
-  addressId          Int
-  Address            Address          @relation(fields: [addressId], references: [id])
+  addressId          Int?
+  Address            Address?         @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
   AgencyCity         AgencyCity[]
@@ -75,10 +113,27 @@ model Agency {
   @@map("agencies")
 }
 
+model Service {
+  id              Int              @id @default(autoincrement())
+  title           String
+  RealtorServices RealtorService[]
+
+  @@map("services")
+}
+
+model RealtorService {
+  id        Int     @id @default(autoincrement())
+  realtorId Int
+  serviceId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("realtor_services")
+}
+
 model City {
   id          Int           @id @default(autoincrement())
-  name        String
-  zip_code    String
+  name        String        @unique
   RealtorCity RealtorCity[]
   Address     Address[]
   AgencyCity  AgencyCity[]
@@ -88,7 +143,7 @@ model City {
 
 model Language {
   id               Int               @id @default(autoincrement())
-  name             String
+  name             String            @unique
   RealtorLanguages RealtorLanguage[]
   AgencyLanguage   AgencyLanguage[]
 
@@ -96,9 +151,10 @@ model Language {
 }
 
 model Course {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id        Int     @id @default(autoincrement())
+  name      String
+  realtorId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
 
   @@map("courses")
 }
@@ -119,7 +175,10 @@ model Comment {
   realtorId Int
   clientId  Int
   text      String
-  rating    Float
+  marketExpertiseRating               Float
+  responsivenessRating                Float
+  negotiationSkillsRating             Float
+  profissionalismAndComunicationRating Float
   Realtor   Realtor @relation(fields: [realtorId], references: [id])
   Client    Client  @relation(fields: [clientId], references: [id])
 
@@ -128,6 +187,7 @@ model Comment {
 
 model Award {
   id        Int      @id @default(autoincrement())
+  title     String
   Realtor   Realtor? @relation(fields: [realtorId], references: [id])
   realtorId Int?
 
@@ -136,24 +196,36 @@ model Award {
 
 model Partnership {
   id        Int       @id @default(autoincrement())
+  title     String
   init      DateTime
   end       DateTime?
+  agency    String
   active    Boolean   @default(false)
   Realtor   Realtor   @relation(fields: [realtorId], references: [id])
-  Agency    Agency    @relation(fields: [agencyId], references: [id])
+  Agency    Agency?   @relation(fields: [agencyId], references: [id])
   realtorId Int
-  agencyId  Int
+  agencyId  Int?
 
   @@map("partnerships")
 }
 
 model Property {
-  id        Int      @id @default(autoincrement())
-  link      String
-  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
-  Agency    Agency?  @relation(fields: [agencyId], references: [id])
-  realtorId Int?
-  agencyId  Int?
+  id             Int          @id @default(autoincrement())
+  title          String
+  price          String
+  propertyType   PropertyType
+  grossArea      String?
+  usefulArea     String?
+  rooms          Rooms?
+  preservation   Preservation
+  link           String
+  profilePicture String?
+  Realtor        Realtor?     @relation(fields: [realtorId], references: [id])
+  Agency         Agency?      @relation(fields: [agencyId], references: [id])
+  realtorId      Int?
+  agencyId       Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("properties")
 }
@@ -195,7 +267,6 @@ model RealtorLanguage {
   id         Int      @id @default(autoincrement())
   realtorId  Int
   languageId Int
-  fluency    Fluency
   Realtor    Realtor  @relation(fields: [realtorId], references: [id])
   Language   Language @relation(fields: [languageId], references: [id])
 
