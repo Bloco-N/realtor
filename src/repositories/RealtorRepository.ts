@@ -133,11 +133,17 @@ export class RealtorRepository {
       }
     })
 
-    const rating = realtor.Comments.map(comment => {
+    let rating = 5
 
-      return (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4
+    if(realtor.Comments.length > 0){
+      
+      rating = realtor.Comments.map(comment => {
+      
+        return (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4
+          
+      }).reduce((a, b) => a + b) / realtor.Comments.length
     
-    }).reduce((a, b) => a + b) / realtor.Comments.length
+    }
 
     if (!realtor) throw new ApiError(404, 'realtor not found')
 
