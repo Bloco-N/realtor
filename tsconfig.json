@@ -9,5 +9,7 @@
     "esModuleInterop": true,
     "outDir": "build",
     "declaration": true
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["__tests__"]
 }
