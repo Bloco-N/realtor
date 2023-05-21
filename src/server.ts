@@ -3,6 +3,6 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-const app = new App(8080)
+const app = new App(Number(process.env.PORT))
 
 app.listen()
