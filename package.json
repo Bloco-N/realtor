@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "ts-node-dev --no-notify --respawn --transpile-only src/server.ts",
     "build": "rimraf ./build && tsc",
-    "start": "yarn build && yarn prisma:run:deploy && node build/src/server.js",
+    "start": "yarn build && yarn prisma:run:deploy && node build/server.js",
     "prisma:create": "npx prisma migrate dev --name",
     "prisma:run": "npx prisma migrate dev",
     "prisma:run:deploy": "npx prisma migrate deploy",
