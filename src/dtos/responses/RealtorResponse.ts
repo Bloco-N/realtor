@@ -10,4 +10,5 @@ export interface RealtorResponse {
   facebook: string | null
   professional_email: string | null
   website: string | null
+  rating: number 
 }

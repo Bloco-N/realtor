@@ -12,10 +12,13 @@ import { Prisma, PrismaClient }     from '@prisma/client'
 import { compare, hash }            from 'bcryptjs'
 import { sign }                     from 'jsonwebtoken'
 import { timeSince }                from '../utils/timeSince'
+import { GeoApiService }            from '../services/GeoApiService'
 
 export class RealtorRepository {
 
   prisma = new PrismaClient()
+  
+  private geoApiService = new GeoApiService()
   private select = {
     id: true,
     email: true,
@@ -65,10 +68,49 @@ export class RealtorRepository {
       skip: take * (page - 1),
       take,
       where,
-      select: this.select
+      include:{
+        Comments: true,
+        Partnerships: {
+          include:{
+            Agency: true
+          }
+        }
+      }
     })
 
-    return new PaginationResponse<RealtorResponse>(realtors, page, Math.ceil(totalOfRealtors / take))
+    const realtorsWithRating = realtors.map((realtor) => {
+
+      let rating = 5
+
+      if(realtor.Comments.length > 0){
+
+        rating = realtor.Comments.map(comment => {
+  
+          return (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4
+        
+        }).reduce((a, b) => a + b) / realtor.Comments.length
+      
+      }
+
+      return{
+        ...realtor,
+        rating,
+      }
+    
+    })
+
+    const realtorsWithLastExp = await Promise.all( realtorsWithRating.map(async (realtor) => {
+
+      const partnerships = await this.findAllPartnerships(realtor.id)
+      return {
+        ...realtor,
+        agencyName: partnerships[0]?.name ? partnerships[0].name : null,
+        agencyPic: partnerships[0]?.pic ? partnerships[0].pic : null
+      }
+    
+    }))
+
+    return new PaginationResponse<RealtorResponse>(realtorsWithLastExp, page, Math.ceil(totalOfRealtors / take))
   
   }
 
@@ -76,12 +118,33 @@ export class RealtorRepository {
 
     const realtor = await this.prisma.realtor.findUnique({
       where: { id },
-      select: this.select
+      include:{
+        Comments: true,
+        RealtorCities: {
+          include: {
+            City: true
+          }
+        },
+        RealtorLanguages:{
+          include:{
+            Language: true
+          }
+        }
+      }
     })
+
+    const rating = realtor.Comments.map(comment => {
+
+      return (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4
+    
+    }).reduce((a, b) => a + b) / realtor.Comments.length
 
     if (!realtor) throw new ApiError(404, 'realtor not found')
 
-    return realtor
+    return {
+      ...realtor,
+      rating
+    }
   
   }
 
@@ -460,7 +523,11 @@ export class RealtorRepository {
         id
       },
       select: {
-        Comments: true
+        Comments: {
+          include: {
+            Client: true
+          }
+        }
       }
     })
 
@@ -468,7 +535,9 @@ export class RealtorRepository {
 
       return {
         id: comment.id,
-        rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalisAndComunicationRating + comment.responsivenessRating) / 4,
+        clientId: comment.clientId,
+        clientName: comment.Client.firstName + ' ' + comment.Client.lastName,
+        rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4,
         text: comment.text
       }
     
@@ -476,6 +545,195 @@ export class RealtorRepository {
 
     return averageComments
   
+  }
+
+  public async listAllCities(id: number){
+
+    const cities:Array<string> = await this.geoApiService.listAllCities()
+
+    const realtor = await this.prisma.realtor.findUnique({ where: { id }, include:{ RealtorCities: {include: { City: true}}}})
+
+    const removeCities = new Set(realtor.RealtorCities.map(item => item.City.name))
+
+    const allCities = cities.filter(item => {
+
+      return !removeCities.has(item)
+    
+    })
+
+    return allCities
+
+  }
+
+  public async addCity(name: string, id:number){
+
+    const dbCity = await this.prisma.city.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbCity) {
+
+      const newCity = await this.prisma.city.create({ data:{ name }})
+
+      const realtorCity = await this.prisma.realtor.update({
+        where:{
+          id
+        },
+        data:{
+          RealtorCities:{
+            create:{
+              City:{
+                connect:{
+                  id: newCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(realtorCity) return 'updated'
+    
+    }else{
+
+      const realtorCity = await this.prisma.realtor.update({
+        where:{
+          id
+        },
+        data:{
+          RealtorCities:{
+            create:{
+              City:{
+                connect:{
+                  id: dbCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(realtorCity) return 'updated'
+    
+    }
+  
+  }
+
+  public async deleteCity(realtorId: number, cityId:number){
+
+    const realtorCities = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        RealtorCities: {
+          delete: {
+            id: cityId
+          }
+        }
+      },
+      select: {
+        RealtorCities: true
+      }
+    })
+
+    if (realtorCities) return 'deleted'
+
+  }
+
+  public async addLanguage(name:string, id: number){
+
+    const realtor = await this.prisma.realtor.findUnique({
+      where:{
+        id
+      },
+      include:{
+        RealtorLanguages:{
+          include:{
+            Language: true
+          }
+        }
+      }
+    })
+
+    if(realtor.RealtorLanguages.map(item => item.Language.name).includes(name)) return 'updated'
+
+    const dbLanguage = await this.prisma.language.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbLanguage) {
+
+      const newLanguage = await this.prisma.language.create({ data:{ name }})
+
+      const realtorLanguage = await this.prisma.realtor.update({
+        where:{
+          id
+        },
+        data:{
+          RealtorLanguages:{
+            create:{ 
+              Language:{
+                connect:{
+                  id: newLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(realtorLanguage) return 'updated'
+    
+    }else{
+
+      const realtorLanguage = await this.prisma.realtor.update({
+        where:{
+          id
+        },
+        data:{
+          RealtorLanguages:{
+            create:{
+              Language:{
+                connect:{
+                  id: dbLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(realtorLanguage) return 'updated'
+    
+    }
+
+  }
+
+  public async deleteLanguage(realtorId: number, languageId:number){
+
+    const realtorLanguages = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        RealtorLanguages: {
+          delete: {
+            id: languageId
+          }
+        }
+      },
+      select: {
+        RealtorLanguages: true
+      }
+    })
+
+    if (realtorLanguages) return 'deleted'
+
   }
 
 }

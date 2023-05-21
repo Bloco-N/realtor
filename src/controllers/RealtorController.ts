@@ -10,10 +10,13 @@ import errorHandling                from '../handlers/errorHandling'
 import { RealtorRepository }        from '../repositories/RealtorRepository'
 import { Request, Response }        from 'express'
 import { validationResult }         from 'express-validator'
+import { GeoApiService }            from '../services/GeoApiService'
 
 export class RealtorController {
 
   private repository = new RealtorRepository()
+
+  private geoApiService = new GeoApiService()
 
   public async listAll(req: Request<unknown, unknown, unknown, ListAllRealtorsQuery>, res: Response) {
 
@@ -356,6 +359,116 @@ export class RealtorController {
       const comments = await this.repository.findAllComments(Number(realtorId))
 
       res.status(200).send(comments)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async listAllCities(req: Request, res:Response){
+
+    try {
+
+      const cities = await this.geoApiService.listAllCities()
+
+      res.status(200).send(cities)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+
+  }
+
+  public async listAllCitiesRealtor(req:Request, res:Response){
+
+    try {
+      
+      const { realtorId } = req.params
+  
+      const cities = await this.repository.listAllCities(Number(realtorId))
+
+      res.status(200).send(cities)
+
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+
+  }
+
+  public async addCity(req:Request, res:Response){
+
+    try {
+
+      const body = req.body
+
+      const updated = await this.repository.addCity(body.name, Number(body.user.id))
+
+      res.status(200).send(updated)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+
+  }
+
+  public async removeCity(req: Request, res: Response) {
+
+    try {
+
+      const { cityId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const removed = await this.repository.deleteCity(Number(id), Number(cityId))
+
+      res.status(200).send(removed)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async addLanguage(req:Request, res:Response){
+
+    try {
+
+      const body = req.body
+
+      const updated = await this.repository.addLanguage(body.name, Number(body.user.id))
+
+      res.status(200).send(updated)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+  
+  }
+
+  public async removeLanguage(req: Request, res: Response) {
+
+    try {
+
+      const { languageId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const removed = await this.repository.deleteLanguage(Number(id), Number(languageId))
+
+      res.status(200).send(removed)
     
     } catch (error) {
 

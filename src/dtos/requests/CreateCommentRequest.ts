@@ -5,5 +5,5 @@ export interface CreateCommentRequest {
   marketExpertiseRating: number
   responsivenessRating: number
   negotiationSkillsRating: number
-  profissionalisAndComunicationRating: number
+  profissionalismAndComunicationRating: number
 }

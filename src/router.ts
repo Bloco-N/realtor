@@ -14,6 +14,14 @@ const agencyController = new AgencyController()
 const clientController = new ClientController()
 const auth = new Auth()
 
+router.get('/city', realtorController.listAllCities.bind(realtorController))
+router.get('/city/:realtorId', realtorController.listAllCitiesRealtor.bind(realtorController))
+router.post('/city', auth.realtorAuth, realtorController.addCity.bind(realtorController))
+router.delete('/city/:cityId', auth.realtorAuth, realtorController.removeCity.bind(realtorController))
+
+router.post('/language', auth.realtorAuth, realtorController.addLanguage.bind(realtorController))
+router.delete('/language/:languageId', auth.realtorAuth, realtorController.removeLanguage.bind(realtorController))
+
 router.get('/realtor', checkSchema(ListAllValidationSchema), realtorController.listAll.bind(realtorController))
 router.get('/realtor/:id', realtorController.get.bind(realtorController))
 router.post('/realtor/sign-in', realtorController.signIn.bind(realtorController))
@@ -53,8 +61,8 @@ router.post('/partnership', realtorController.addPartnership.bind(realtorControl
 router.delete('/partnership/:partnershipId', auth.realtorAuth, realtorController.removePartnerShip.bind(realtorController))
 
 router.get('/comment/realtor/:realtorId', realtorController.listAllComments.bind(realtorController))
-router.post('/comment', clientController.addComment.bind(realtorController))
-router.delete('/comment/:commentId', auth.realtorAuth, clientController.removeComment.bind(realtorController))
+router.post('/comment', clientController.addComment.bind(clientController))
+router.delete('/comment/:commentId', auth.realtorAuth, clientController.removeComment.bind(clientController))
 
 router.get('/service', serviceController.listAll.bind(serviceController))
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))

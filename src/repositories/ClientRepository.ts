@@ -154,7 +154,7 @@ export class ClientRepository {
 
   public async addComment(data: CreateCommentRequest){
 
-    const comment = this.prisma.comment.create({
+    const comment = await this.prisma.comment.create({
       data
     })
 
@@ -164,14 +164,14 @@ export class ClientRepository {
 
   public async deleteComment(clientId: number, commentId: number){
 
-    const deleted = this.prisma.client.update({
+    const deleted = await this.prisma.client.update({
       where:{
         id: clientId
       },
       data:{
         Comment:{
           delete:{
-            id: commentId
+            id:commentId
           }
         }
       }

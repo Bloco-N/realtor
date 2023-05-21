@@ -133,8 +133,7 @@ model RealtorService {
 
 model City {
   id          Int           @id @default(autoincrement())
-  name        String
-  zip_code    String
+  name        String        @unique
   RealtorCity RealtorCity[]
   Address     Address[]
   AgencyCity  AgencyCity[]
@@ -144,7 +143,7 @@ model City {
 
 model Language {
   id               Int               @id @default(autoincrement())
-  name             String
+  name             String            @unique
   RealtorLanguages RealtorLanguage[]
   AgencyLanguage   AgencyLanguage[]
 
@@ -179,7 +178,7 @@ model Comment {
   marketExpertiseRating               Float
   responsivenessRating                Float
   negotiationSkillsRating             Float
-  profissionalisAndComunicationRating Float
+  profissionalismAndComunicationRating Float
   Realtor   Realtor @relation(fields: [realtorId], references: [id])
   Client    Client  @relation(fields: [clientId], references: [id])
 
@@ -268,7 +267,6 @@ model RealtorLanguage {
   id         Int      @id @default(autoincrement())
   realtorId  Int
   languageId Int
-  fluency    Fluency
   Realtor    Realtor  @relation(fields: [realtorId], references: [id])
   Language   Language @relation(fields: [languageId], references: [id])
 
