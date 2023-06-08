@@ -19,6 +19,9 @@ router.get('/city/:realtorId', realtorController.listAllCitiesRealtor.bind(realt
 router.post('/city', auth.realtorAuth, realtorController.addCity.bind(realtorController))
 router.delete('/city/:cityId', auth.realtorAuth, realtorController.removeCity.bind(realtorController))
 
+router.post('/realtor/recover-password', realtorController.recoverPassword.bind(realtorController))
+router.put('/realtor/recover-password/update-password', auth.realtorAuth, realtorController.updatePassword.bind(realtorController))
+
 router.post('/language', auth.realtorAuth, realtorController.addLanguage.bind(realtorController))
 router.delete('/language/:languageId', auth.realtorAuth, realtorController.removeLanguage.bind(realtorController))
 

@@ -131,6 +131,38 @@ export class RealtorController {
   
   }
 
+  public async recoverPassword(req:Request, res:Response){
+
+    try {
+
+      const { body:{ email } } = req
+      const updated = await this.repository.recoverPassword(email)
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async updatePassword(req:Request, res:Response){
+
+    try {
+
+      const { body:{ password, user } } = req
+      const updated = await this.repository.updatePassword(password, user)
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async listAllProperties(req: Request, res: Response) {
 
     try {

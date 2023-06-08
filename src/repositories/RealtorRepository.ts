@@ -13,12 +13,15 @@ import { compare, hash }            from 'bcryptjs'
 import { sign }                     from 'jsonwebtoken'
 import { timeSince }                from '../utils/timeSince'
 import { GeoApiService }            from '../services/GeoApiService'
+import { MailService }              from '../services/MailService'
 
 export class RealtorRepository {
 
   prisma = new PrismaClient()
   
   private geoApiService = new GeoApiService()
+
+  private mailService = new MailService()
   private select = {
     id: true,
     email: true,
@@ -222,6 +225,43 @@ export class RealtorRepository {
     })
 
     if (realtor) return 'updated'
+  
+  }
+
+  public async updatePassword(password:string, user){
+
+    const hashed = await hash(password, 10)
+
+    const realtor = await this.prisma.realtor.update({
+      data: {
+        password: hashed
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(realtor) return 'updated'
+
+  }
+
+  public async recoverPassword(email:string){
+    
+    const realtor = await this.prisma.realtor.findUnique({where:{email}}) 
+    if(realtor){
+
+      const token = sign(realtor, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.sendMail(realtor.email, 'Recupere sua senha', realtor.firstName, token)
+      return 'email sended'
+
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
   
   }
 
