@@ -197,4 +197,40 @@ export class AgencyRepository {
   
   }
 
+  public async verifyAccount(email:string){
+
+    const agency = await this.prisma.agency.findUnique({where:{email}}) 
+    if(agency){
+
+      const token = sign(agency, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.verifyAccount(agency.email, 'Verifique sua conta', agency.name, token, 'agency')
+
+      return 'email sended'
+    
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
+  
+  }
+
+  public async updateVerify(user){
+
+    const agency = await this.prisma.agency.update({
+      data: {
+        verified: true
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(agency) return 'updated'
+
+  }
+
 }

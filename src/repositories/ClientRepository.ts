@@ -223,4 +223,40 @@ export class ClientRepository {
   
   }
 
+  public async verifyAccount(email:string){
+
+    const client = await this.prisma.client.findUnique({where:{email}}) 
+    if(client){
+
+      const token = sign(client, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.verifyAccount(client.email, 'Verifique sua conta', client.firstName, token, 'client')
+
+      return 'email sended'
+    
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
+  
+  }
+
+  public async updateVerify(user){
+
+    const client = await this.prisma.client.update({
+      data: {
+        verified: true
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(client) return 'updated'
+
+  }
+
 }

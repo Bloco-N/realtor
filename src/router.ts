@@ -31,6 +31,12 @@ router.put('/agency/recover-password/update-password', auth.realtorAuth, agencyC
 router.post('/realtor/verify', realtorController.verifyAccount.bind(realtorController))
 router.put('/realtor/verify', auth.realtorAuth, realtorController.updateVerify.bind(realtorController))
 
+router.post('/client/verify', clientController.verifyAccount.bind(clientController))
+router.put('/client/verify', auth.realtorAuth, clientController.updateVerify.bind(clientController))
+
+router.post('/agency/verify', agencyController.verifyAccount.bind(agencyController))
+router.put('/agency/verify', auth.realtorAuth, agencyController.updateVerify.bind(agencyController))
+
 router.post('/language', auth.realtorAuth, realtorController.addLanguage.bind(realtorController))
 router.delete('/language/:languageId', auth.realtorAuth, realtorController.removeLanguage.bind(realtorController))
 
