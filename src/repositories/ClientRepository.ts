@@ -20,7 +20,8 @@ export class ClientRepository {
     id: true,
     email: true,
     firstName: true,
-    lastName: true
+    lastName: true,
+    verified: true
   }
 
   private where = (search: string): Prisma.ClientWhereInput =>

@@ -27,7 +27,8 @@ export class AgencyRepository {
     coverPicture: true,
     phoneCountry: true,
     wppCountry: true,
-    wppText: true
+    wppText: true,
+    verified: true
   }
 
   private where = (search: string): Prisma.AgencyWhereInput =>
