@@ -254,7 +254,7 @@ export class RealtorRepository {
         expiresIn: '8h'
       })
 
-      this.mailService.sendMail(realtor.email, 'Recupere sua senha', realtor.firstName, token)
+      this.mailService.sendMail(realtor.email, 'Recupere sua senha', realtor.firstName, token, 'realtor')
       return 'email sended'
 
     }else{
@@ -263,6 +263,42 @@ export class RealtorRepository {
     
     }
   
+  }
+
+  public async verifyAccount(email:string){
+
+    const realtor = await this.prisma.realtor.findUnique({where:{email}}) 
+    if(realtor){
+
+      const token = sign(realtor, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.verifyAccount(realtor.email, 'Verifique sua conta', realtor.firstName, token, 'realtor')
+
+      return 'email sended'
+    
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
+  
+  }
+
+  public async updateVerify(user){
+
+    const realtor = await this.prisma.realtor.update({
+      data: {
+        verified: true
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(realtor) return 'updated'
+
   }
 
   public async delete(id: number): Promise<string> {

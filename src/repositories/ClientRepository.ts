@@ -1,3 +1,4 @@
+
 import { CreateClientRequest }  from '../dtos/requests/CreateClientRequest'
 import { CreateCommentRequest } from '../dtos/requests/CreateCommentRequest'
 import { SignInClientRequest }  from '../dtos/requests/SingInClientRequest'
@@ -8,10 +9,13 @@ import { ApiError }             from '../errors/ApiError'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { compare, hash }        from 'bcryptjs'
 import { sign }                 from 'jsonwebtoken'
+import { MailService }          from '../services/MailService'
 
 export class ClientRepository {
 
   prisma = new PrismaClient()
+
+  private mailService = new MailService()
   private select = {
     id: true,
     email: true,
@@ -63,7 +67,7 @@ export class ClientRepository {
       select: this.select
     })
 
-    if (!client) throw new ApiError(404, 'realtor not found')
+    if (!client) throw new ApiError(404, 'client not found')
 
     return client
   
@@ -179,6 +183,43 @@ export class ClientRepository {
 
     if(deleted) return 'deleted'
 
+  }
+
+  public async updatePassword(password:string, user){
+
+    const hashed = await hash(password, 10)
+
+    const client = await this.prisma.client.update({
+      data: {
+        password: hashed
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(client) return 'updated'
+
+  }
+
+  public async recoverPassword(email:string){
+    
+    const client = await this.prisma.client.findUnique({where:{email}}) 
+    if(client){
+
+      const token = sign(client, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.sendMail(client.email, 'Recupere sua senha', client.firstName, token, 'client')
+      return 'email sended'
+
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
+  
   }
 
 }

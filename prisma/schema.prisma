@@ -73,6 +73,7 @@ model Realtor {
   professional_email String?
   website            String?
   expTime            Int?
+  verified           Boolean           @default(false)
   RealtorServices    RealtorService[]
   Partnerships       Partnership[]
   Awards             Award[]

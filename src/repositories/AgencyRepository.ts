@@ -7,10 +7,12 @@ import { ApiError }             from '../errors/ApiError'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { compare, hash }        from 'bcryptjs'
 import { sign }                 from 'jsonwebtoken'
+import { MailService }          from '../services/MailService'
 
 export class AgencyRepository {
 
   prisma = new PrismaClient()
+  private mailService = new MailService()
   private select = {
     id: true,
     email: true,
@@ -154,6 +156,43 @@ export class AgencyRepository {
     })
 
     if (agency) return 'deleted'
+  
+  }
+
+  public async updatePassword(password:string, user){
+
+    const hashed = await hash(password, 10)
+
+    const agency = await this.prisma.agency.update({
+      data: {
+        password: hashed
+      },
+      where: {
+        id: user.id
+      }
+    })
+
+    if(agency) return 'updated'
+
+  }
+
+  public async recoverPassword(email:string){
+    
+    const agency = await this.prisma.agency.findUnique({where:{email}}) 
+    if(agency){
+
+      const token = sign(agency, process.env.API_SECRET, {
+        expiresIn: '8h'
+      })
+
+      this.mailService.sendMail(agency.email, 'Recupere sua senha', agency.name, token, 'agency')
+      return 'email sended'
+
+    }else{
+
+      throw new ApiError(404, 'not found')
+    
+    }
   
   }
 

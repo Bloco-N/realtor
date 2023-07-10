@@ -163,6 +163,38 @@ export class RealtorController {
   
   }
 
+  public async updateVerify(req:Request, res:Response){
+
+    try {
+
+      const { body:{ user } } = req
+      const updated = await this.repository.updateVerify(user)
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async verifyAccount(req:Request, res:Response){
+
+    try {
+
+      const { body:{ email } } = req
+      const updated = await this.repository.verifyAccount(email)
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async listAllProperties(req: Request, res: Response) {
 
     try {
