@@ -83,8 +83,13 @@ router.post('/comment', clientController.addComment.bind(clientController))
 router.delete('/comment/:commentId', auth.realtorAuth, clientController.removeComment.bind(clientController))
 
 router.get('/service', serviceController.listAll.bind(serviceController))
+
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))
 router.post('/service/realtor', serviceController.createRealtorService.bind(serviceController))
 router.delete('/service/realtor/:id', auth.realtorAuth, serviceController.removeRealtorService.bind(serviceController))
+
+router.get('/service/agenct/:agencyId', serviceController.listAllByAgency.bind(serviceController))
+router.post('/service/agency', serviceController.createAgencyService.bind(serviceController))
+router.delete('/service/agency/:id', auth.realtorAuth, serviceController.removeAgencyService.bind(serviceController))
 
 export { router }

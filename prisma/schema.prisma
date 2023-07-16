@@ -112,6 +112,7 @@ model Agency {
   Properties         Property[]
   AgencyCity         AgencyCity[]
   AgencyLanguage     AgencyLanguage[]
+  AgencieServices    AgencyService[]
 
   @@map("agencies")
 }
@@ -120,6 +121,7 @@ model Service {
   id              Int              @id @default(autoincrement())
   title           String
   RealtorServices RealtorService[]
+  AgencieServices AgencyService[]
 
   @@map("services")
 }
@@ -132,6 +134,16 @@ model RealtorService {
   Service   Service @relation(fields: [serviceId], references: [id])
 
   @@map("realtor_services")
+}
+
+model AgencyService {
+  id        Int     @id @default(autoincrement())
+  agencyId  Int
+  serviceId Int
+  Agency    Agency  @relation(fields: [agencyId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("agencie_services")
 }
 
 model City {
