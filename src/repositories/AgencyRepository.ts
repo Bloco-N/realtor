@@ -1,13 +1,14 @@
-import { CreateAgencyRequest }  from '../dtos/requests/CreateAgencyRequest'
-import { SignInAgencyRequest }  from '../dtos/requests/SingInAgencyRequest'
-import { UpdateAgencyRequest }  from '../dtos/requests/UpdateAgencyRequest'
-import { AgencyResponse }       from '../dtos/responses/AgencyResponse'
-import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
-import { ApiError }             from '../errors/ApiError'
-import { Prisma, PrismaClient } from '@prisma/client'
-import { compare, hash }        from 'bcryptjs'
-import { sign }                 from 'jsonwebtoken'
-import { MailService }          from '../services/MailService'
+import { CreateAgencyRequest }         from '../dtos/requests/CreateAgencyRequest'
+import { SignInAgencyRequest }         from '../dtos/requests/SingInAgencyRequest'
+import { UpdateAgencyRequest }         from '../dtos/requests/UpdateAgencyRequest'
+import { AgencyResponse }              from '../dtos/responses/AgencyResponse'
+import { PaginationResponse }          from '../dtos/responses/PaginationResponse'
+import { ApiError }                    from '../errors/ApiError'
+import { Prisma, PrismaClient }        from '@prisma/client'
+import { compare, hash }               from 'bcryptjs'
+import { sign }                        from 'jsonwebtoken'
+import { MailService }                 from '../services/MailService'
+import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
 
 export class AgencyRepository {
 
@@ -231,6 +232,65 @@ export class AgencyRepository {
 
     if(agency) return 'updated'
 
+  }
+
+  public async findAllProperties(id: number) {
+
+    const { Properties } = await this.prisma.agency.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    return Properties
+  
+  }
+
+  public async addProperty(data: CreatePropertyRequestAgency) {
+
+    const { propertyData, agencyId } = data
+
+    const properties = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        Properties: {
+          create: propertyData
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'created'
+  
+  }
+
+  public async deleteProperty(agencyId: number, propertyId: number) {
+
+    const properties = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        Properties: {
+          delete: {
+            id: propertyId
+          }
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'deleted'
+  
   }
 
 }

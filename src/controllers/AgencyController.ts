@@ -1,11 +1,12 @@
-import { CreateAgencyRequest } from '../dtos/requests/CreateAgencyRequest'
-import { ListAllAgencyQuery }  from '../dtos/requests/ListAllAgencyQuery'
-import { UpdateAgencyRequest } from '../dtos/requests/UpdateAgencyRequest'
-import { ApiError }            from '../errors/ApiError'
-import errorHandling           from '../handlers/errorHandling'
-import { AgencyRepository }    from '../repositories/AgencyRepository'
-import { Request, Response }   from 'express'
-import { validationResult }    from 'express-validator'
+import { CreateAgencyRequest }         from '../dtos/requests/CreateAgencyRequest'
+import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
+import { ListAllAgencyQuery }          from '../dtos/requests/ListAllAgencyQuery'
+import { UpdateAgencyRequest }         from '../dtos/requests/UpdateAgencyRequest'
+import { ApiError }                    from '../errors/ApiError'
+import errorHandling                   from '../handlers/errorHandling'
+import { AgencyRepository }            from '../repositories/AgencyRepository'
+import { Request, Response }           from 'express'
+import { validationResult }            from 'express-validator'
 
 export class AgencyController {
 
@@ -189,6 +190,61 @@ export class AgencyController {
       const { body:{ email } } = req
       const updated = await this.repository.verifyAccount(email)
       res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async listAllProperties(req: Request, res: Response) {
+
+    try {
+
+      const { agencyId } = req.params
+      const properties = await this.repository.findAllProperties(Number(agencyId))
+
+      res.status(200).send(properties)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async addProperty(req: Request<unknown, unknown, CreatePropertyRequestAgency>, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addProperty(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removeProperty(req: Request, res: Response) {
+
+    try {
+
+      const { propertyId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const realtor = await this.repository.deleteProperty(Number(id), Number(propertyId))
+
+      res.status(200).send(realtor)
     
     } catch (error) {
 

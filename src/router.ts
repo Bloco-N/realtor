@@ -66,6 +66,10 @@ router.get('/property/realtor/:realtorId', realtorController.listAllProperties.b
 router.post('/property', realtorController.addProperty.bind(realtorController))
 router.delete('/property/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
 
+router.get('/property/agency/:agencyId', agencyController.listAllProperties.bind(agencyController))
+router.post('/property', agencyController.addProperty.bind(agencyController))
+router.delete('/property/:propertyId', auth.realtorAuth, agencyController.removeProperty.bind(agencyController))
+
 router.get('/award/realtor/:realtorId', realtorController.listAllAwards.bind(realtorController))
 router.post('/award', realtorController.addAward.bind(realtorController))
 router.delete('/award/:awardId', auth.realtorAuth, realtorController.removeAward.bind(realtorController))
