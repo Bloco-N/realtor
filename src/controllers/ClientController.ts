@@ -162,6 +162,44 @@ export class ClientController {
 
   }
 
+  public async addCommentAgency(req: Request, res:Response){
+
+    try {
+
+      const { body } = req
+
+      const created = await this.repository.addCommentAgency(body)
+
+      res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async removeCommentAgency(req: Request, res:Response){
+
+    try {
+
+      const { commentId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const deleted = await this.repository.deleteCommentAgency(Number(id), Number(commentId))
+
+      res.status(200).send(deleted)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+
+  }
+
   public async recoverPassword(req:Request, res:Response){
 
     try {

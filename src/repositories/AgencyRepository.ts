@@ -72,7 +72,14 @@ export class AgencyRepository {
 
     const client = await this.prisma.agency.findUnique({
       where: { id },
-      select: this.select
+      include:{
+        Comments: true,
+        AgencyCities: {
+          include: {
+            City: true
+          }
+        }
+      }
     })
 
     if (!client) throw new ApiError(404, 'agency not found')
@@ -389,6 +396,37 @@ export class AgencyRepository {
 
     if (agencyCities) return 'deleted'
 
+  }
+
+  public async findAllComments(id: number) {
+
+    const { Comments } = await this.prisma.agency.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Comments: {
+          include: {
+            Client: true
+          }
+        }
+      }
+    })
+
+    const averageComments = Comments.map((comment) => {
+
+      return {
+        id: comment.id,
+        clientId: comment.clientId,
+        clientName: comment.Client.firstName + ' ' + comment.Client.lastName,
+        rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4,
+        text: comment.text
+      }
+    
+    })
+
+    return averageComments
+  
   }
 
 }

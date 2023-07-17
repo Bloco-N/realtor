@@ -310,4 +310,21 @@ export class AgencyController {
   
   }
 
+  public async listAllComments(req: Request, res: Response) {
+
+    try {
+
+      const { agencyId } = req.params
+      const comments = await this.repository.findAllComments(Number(agencyId))
+
+      res.status(200).send(comments)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
 }
