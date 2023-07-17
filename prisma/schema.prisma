@@ -43,14 +43,15 @@ enum Preservation {
 }
 
 model Client {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  firstName String
-  lastName  String
-  verified  Boolean   @default(false)
-  Sale      Sale[]
-  Comment   Comment[]
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  password        String
+  firstName       String
+  lastName        String
+  verified        Boolean   @default(false)
+  Sale            Sale[]
+  Comment         Comment[]
+  CommentAgency   CommentAgency[]
 
   @@map("clients")
 }
@@ -110,9 +111,10 @@ model Agency {
   Address            Address?         @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
-  AgencyCity         AgencyCity[]
+  AgencyCities       AgencyCity[]
   AgencyLanguage     AgencyLanguage[]
   AgencieServices    AgencyService[]
+  Comments           CommentAgency[]
 
   @@map("agencies")
 }
@@ -198,6 +200,21 @@ model Comment {
   Client    Client  @relation(fields: [clientId], references: [id])
 
   @@map("comments")
+}
+
+model CommentAgency {
+  id        Int     @id @default(autoincrement())
+  agencyId  Int
+  clientId  Int
+  text      String
+  marketExpertiseRating               Float
+  responsivenessRating                Float
+  negotiationSkillsRating             Float
+  profissionalismAndComunicationRating Float
+  Agency    Agency  @relation(fields: [agencyId], references: [id])
+  Client    Client  @relation(fields: [clientId], references: [id])
+
+  @@map("comments_agency")
 }
 
 model Award {

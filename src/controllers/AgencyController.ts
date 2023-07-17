@@ -254,4 +254,60 @@ export class AgencyController {
   
   }
 
+  public async listAllCitiesRealtor(req:Request, res:Response){
+
+    try {
+      
+      const { agencyId } = req.params
+  
+      const cities = await this.repository.listAllCities(Number(agencyId))
+
+      res.status(200).send(cities)
+
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+
+  }
+
+  public async addCity(req:Request, res:Response){
+
+    try {
+
+      const body = req.body
+
+      const updated = await this.repository.addCity(body.name, Number(body.user.id))
+
+      res.status(200).send(updated)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+
+  }
+
+  public async removeCity(req: Request, res: Response) {
+
+    try {
+
+      const { cityId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const removed = await this.repository.deleteCity(Number(id), Number(cityId))
+
+      res.status(200).send(removed)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
 }

@@ -9,11 +9,13 @@ import { compare, hash }               from 'bcryptjs'
 import { sign }                        from 'jsonwebtoken'
 import { MailService }                 from '../services/MailService'
 import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
+import { GeoApiService }               from '../services/GeoApiService'
 
 export class AgencyRepository {
 
   prisma = new PrismaClient()
   private mailService = new MailService()
+  private geoApiService = new GeoApiService()
   private select = {
     id: true,
     email: true,
@@ -291,6 +293,102 @@ export class AgencyRepository {
 
     if (properties) return 'deleted'
   
+  }
+
+  public async listAllCities(id: number){
+
+    const cities:Array<string> = await this.geoApiService.listAllCities()
+
+    const realtor = await this.prisma.agency.findUnique({ where: { id }, include:{ AgencyCities: {include: { City: true}}}})
+
+    const removeCities = new Set(realtor.AgencyCities.map(item => item.City.name))
+
+    const allCities = cities.filter(item => {
+
+      return !removeCities.has(item)
+    
+    })
+
+    return allCities
+
+  }
+
+  public async addCity(name: string, id:number){
+
+    const dbCity = await this.prisma.city.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbCity) {
+
+      const newCity = await this.prisma.city.create({ data:{ name }})
+
+      const agencyCity = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyCities:{
+            create:{
+              City:{
+                connect:{
+                  id: newCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyCity) return 'updated'
+    
+    }else{
+
+      const agencyCity = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyCities:{
+            create:{
+              City:{
+                connect:{
+                  id: dbCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyCity) return 'updated'
+    
+    }
+  
+  }
+
+  public async deleteCity(agencyId: number, cityId:number){
+
+    const agencyCities = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        AgencyCities: {
+          delete: {
+            id: cityId
+          }
+        }
+      },
+      select: {
+        AgencyCities: true
+      }
+    })
+
+    if (agencyCities) return 'deleted'
+
   }
 
 }
