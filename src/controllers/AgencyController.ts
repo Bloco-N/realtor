@@ -327,4 +327,42 @@ export class AgencyController {
   
   }
 
+  public async addLanguage(req:Request, res:Response){
+
+    try {
+
+      const body = req.body
+
+      const updated = await this.repository.addLanguage(body.name, Number(body.user.id))
+
+      res.status(200).send(updated)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+      
+    }
+  
+  }
+
+  public async removeLanguage(req: Request, res: Response) {
+
+    try {
+
+      const { languageId } = req.params
+      const {
+        user: { id }
+      } = req.body
+      const removed = await this.repository.deleteLanguage(Number(id), Number(languageId))
+
+      res.status(200).send(removed)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
 }

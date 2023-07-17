@@ -429,4 +429,97 @@ export class AgencyRepository {
   
   }
 
+  public async addLanguage(name:string, id: number){
+
+    const agency = await this.prisma.agency.findUnique({
+      where:{
+        id
+      },
+      include:{
+        AgencyLanguages:{
+          include:{
+            Language: true
+          }
+        }
+      }
+    })
+
+    if(agency.AgencyLanguages.map(item => item.Language.name).includes(name)) return 'updated'
+
+    const dbLanguage = await this.prisma.language.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbLanguage) {
+
+      const newLanguage = await this.prisma.language.create({ data:{ name }})
+
+      const agencyLanguage = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyLanguages:{
+            create:{ 
+              Language:{
+                connect:{
+                  id: newLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyLanguage) return 'updated'
+    
+    }else{
+
+      const agencyLanguage = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyLanguages:{
+            create:{
+              Language:{
+                connect:{
+                  id: dbLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyLanguage) return 'updated'
+    
+    }
+
+  }
+
+  public async deleteLanguage(agencyId: number, languageId:number){
+
+    const agencyLanguages = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        AgencyLanguages: {
+          delete: {
+            id: languageId
+          }
+        }
+      },
+      select: {
+        AgencyLanguages: true
+      }
+    })
+
+    if (agencyLanguages) return 'deleted'
+
+  }
+
 }

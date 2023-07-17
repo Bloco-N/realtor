@@ -112,7 +112,7 @@ model Agency {
   Partnerships       Partnership[]
   Properties         Property[]
   AgencyCities       AgencyCity[]
-  AgencyLanguage     AgencyLanguage[]
+  AgencyLanguages    AgencyLanguage[]
   AgencieServices    AgencyService[]
   Comments           CommentAgency[]
 
@@ -162,7 +162,7 @@ model Language {
   id               Int               @id @default(autoincrement())
   name             String            @unique
   RealtorLanguages RealtorLanguage[]
-  AgencyLanguage   AgencyLanguage[]
+  AgencyLanguages   AgencyLanguage[]
 
   @@map("languages")
 }
@@ -309,7 +309,7 @@ model AgencyLanguage {
   id         Int      @id @default(autoincrement())
   agencyId   Int
   languageId Int
-  Lenguage   Language @relation(fields: [languageId], references: [id])
+  Language   Language @relation(fields: [languageId], references: [id])
   Agency     Agency   @relation(fields: [agencyId], references: [id])
 
   @@map("agency_languages")

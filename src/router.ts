@@ -41,8 +41,11 @@ router.put('/client/verify', auth.realtorAuth, clientController.updateVerify.bin
 router.post('/agency/verify', agencyController.verifyAccount.bind(agencyController))
 router.put('/agency/verify', auth.realtorAuth, agencyController.updateVerify.bind(agencyController))
 
-router.post('/language', auth.realtorAuth, realtorController.addLanguage.bind(realtorController))
-router.delete('/language/:languageId', auth.realtorAuth, realtorController.removeLanguage.bind(realtorController))
+router.post('/language/realtor', auth.realtorAuth, realtorController.addLanguage.bind(realtorController))
+router.delete('/language/realtor/:languageId', auth.realtorAuth, realtorController.removeLanguage.bind(realtorController))
+
+router.post('/language/agency', auth.realtorAuth, agencyController.addLanguage.bind(agencyController))
+router.delete('/language/agency/:languageId', auth.realtorAuth, agencyController.removeLanguage.bind(agencyController))
 
 router.get('/realtor', checkSchema(ListAllValidationSchema), realtorController.listAll.bind(realtorController))
 router.get('/realtor/:id', realtorController.get.bind(realtorController))
