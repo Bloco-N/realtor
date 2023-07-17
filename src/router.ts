@@ -15,9 +15,13 @@ const clientController = new ClientController()
 const auth = new Auth()
 
 router.get('/city', realtorController.listAllCities.bind(realtorController))
-router.get('/city/:realtorId', realtorController.listAllCitiesRealtor.bind(realtorController))
-router.post('/city', auth.realtorAuth, realtorController.addCity.bind(realtorController))
-router.delete('/city/:cityId', auth.realtorAuth, realtorController.removeCity.bind(realtorController))
+router.get('/city/realtor/:realtorId', realtorController.listAllCitiesRealtor.bind(realtorController))
+router.post('/city/realtor', auth.realtorAuth, realtorController.addCity.bind(realtorController))
+router.delete('/city/realtor/:cityId', auth.realtorAuth, realtorController.removeCity.bind(realtorController))
+
+router.get('/city/agency/:agencyId', agencyController.listAllCitiesRealtor.bind(agencyController))
+router.post('/city/agency', auth.realtorAuth, agencyController.addCity.bind(agencyController))
+router.delete('/city/agency/:cityId', auth.realtorAuth, agencyController.removeCity.bind(agencyController))
 
 router.post('/realtor/recover-password', realtorController.recoverPassword.bind(realtorController))
 router.put('/realtor/recover-password/update-password', auth.realtorAuth, realtorController.updatePassword.bind(realtorController))
