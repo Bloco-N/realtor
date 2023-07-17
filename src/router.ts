@@ -70,12 +70,12 @@ router.put('/client', auth.realtorAuth, clientController.update.bind(clientContr
 router.delete('/client/:id', clientController.remove.bind(clientController))
 
 router.get('/property/realtor/:realtorId', realtorController.listAllProperties.bind(realtorController))
-router.post('/property', realtorController.addProperty.bind(realtorController))
-router.delete('/property/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
+router.post('/property/realtor', realtorController.addProperty.bind(realtorController))
+router.delete('/property/realtor/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
 
 router.get('/property/agency/:agencyId', agencyController.listAllProperties.bind(agencyController))
-router.post('/property', agencyController.addProperty.bind(agencyController))
-router.delete('/property/:propertyId', auth.realtorAuth, agencyController.removeProperty.bind(agencyController))
+router.post('/property/agency', agencyController.addProperty.bind(agencyController))
+router.delete('/property/agency/:propertyId', auth.realtorAuth, agencyController.removeProperty.bind(agencyController))
 
 router.get('/award/realtor/:realtorId', realtorController.listAllAwards.bind(realtorController))
 router.post('/award', realtorController.addAward.bind(realtorController))
