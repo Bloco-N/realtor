@@ -74,6 +74,25 @@ export class AgencyRepository {
       where: { id },
       include:{
         Comments: true,
+        Partnerships:{
+          include:{
+            Realtor: {
+              include:{
+                Properties:true
+              }
+            }
+          }
+        },
+        AgencyLanguages:{
+          include:{
+            Language: true
+          }
+        },
+        AgencieServices:{
+          include:{
+            Service: true
+          }
+        },
         AgencyCities: {
           include: {
             City: true

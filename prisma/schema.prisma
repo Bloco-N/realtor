@@ -48,6 +48,11 @@ model Client {
   password        String
   firstName       String
   lastName        String
+  phone           String?
+  country         String?
+  city            String?
+  address         String?
+  zipCode         String?
   verified        Boolean   @default(false)
   Sale            Sale[]
   Comment         Comment[]
@@ -106,6 +111,7 @@ model Agency {
   facebook           String?
   professional_email String?
   website            String?
+  address            String?
   verified           Boolean          @default(false)
   addressId          Int?
   Address            Address?         @relation(fields: [addressId], references: [id])
