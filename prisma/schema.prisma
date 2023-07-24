@@ -119,7 +119,7 @@ model Agency {
   Properties         Property[]
   AgencyCities       AgencyCity[]
   AgencyLanguages    AgencyLanguage[]
-  AgencieServices    AgencyService[]
+  AgencyServices     AgencyService[]
   Comments           CommentAgency[]
 
   @@map("agencies")

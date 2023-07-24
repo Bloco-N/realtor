@@ -88,7 +88,7 @@ export class AgencyRepository {
             Language: true
           }
         },
-        AgencieServices:{
+        AgencyServices:{
           include:{
             Service: true
           }
