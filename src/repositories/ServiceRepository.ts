@@ -49,4 +49,42 @@ export class ServiceRepository {
   
   }
 
+  public async findAllByAgency(agencyId: number) {
+
+    const agencyServices = await this.prisma.agencyService.findMany({ where: { agencyId }, include: { Service: true } })
+
+    const services = agencyServices.map((item) => {
+
+      return {
+        id: item.id,
+        service: item.Service
+      }
+    
+    })
+
+    return services
+  
+  }
+
+  public async createAgencyService(agencyId: number, serviceId: number) {
+
+    const created = await this.prisma.agencyService.create({
+      data:{
+        agencyId,
+        serviceId
+      }
+    })
+
+    if (created) return 'created'
+  
+  }
+
+  public async removeAgencyService(id: number) {
+
+    const deleted = await this.prisma.agencyService.delete({ where: { id } })
+
+    if (deleted) return 'deleted'
+  
+  }
+
 }

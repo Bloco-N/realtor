@@ -1,18 +1,21 @@
-import { CreateAgencyRequest }  from '../dtos/requests/CreateAgencyRequest'
-import { SignInAgencyRequest }  from '../dtos/requests/SingInAgencyRequest'
-import { UpdateAgencyRequest }  from '../dtos/requests/UpdateAgencyRequest'
-import { AgencyResponse }       from '../dtos/responses/AgencyResponse'
-import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
-import { ApiError }             from '../errors/ApiError'
-import { Prisma, PrismaClient } from '@prisma/client'
-import { compare, hash }        from 'bcryptjs'
-import { sign }                 from 'jsonwebtoken'
-import { MailService }          from '../services/MailService'
+import { CreateAgencyRequest }         from '../dtos/requests/CreateAgencyRequest'
+import { SignInAgencyRequest }         from '../dtos/requests/SingInAgencyRequest'
+import { UpdateAgencyRequest }         from '../dtos/requests/UpdateAgencyRequest'
+import { AgencyResponse }              from '../dtos/responses/AgencyResponse'
+import { PaginationResponse }          from '../dtos/responses/PaginationResponse'
+import { ApiError }                    from '../errors/ApiError'
+import { Prisma, PrismaClient }        from '@prisma/client'
+import { compare, hash }               from 'bcryptjs'
+import { sign }                        from 'jsonwebtoken'
+import { MailService }                 from '../services/MailService'
+import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
+import { GeoApiService }               from '../services/GeoApiService'
 
 export class AgencyRepository {
 
   prisma = new PrismaClient()
   private mailService = new MailService()
+  private geoApiService = new GeoApiService()
   private select = {
     id: true,
     email: true,
@@ -69,7 +72,33 @@ export class AgencyRepository {
 
     const client = await this.prisma.agency.findUnique({
       where: { id },
-      select: this.select
+      include:{
+        Comments: true,
+        Partnerships:{
+          include:{
+            Realtor: {
+              include:{
+                Properties:true
+              }
+            }
+          }
+        },
+        AgencyLanguages:{
+          include:{
+            Language: true
+          }
+        },
+        AgencyServices:{
+          include:{
+            Service: true
+          }
+        },
+        AgencyCities: {
+          include: {
+            City: true
+          }
+        }
+      }
     })
 
     if (!client) throw new ApiError(404, 'agency not found')
@@ -230,6 +259,285 @@ export class AgencyRepository {
     })
 
     if(agency) return 'updated'
+
+  }
+
+  public async findAllProperties(id: number) {
+
+    const { Properties } = await this.prisma.agency.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    return Properties
+  
+  }
+
+  public async addProperty(data: CreatePropertyRequestAgency) {
+
+    const { propertyData, agencyId } = data
+
+    const properties = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        Properties: {
+          create: propertyData
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'created'
+  
+  }
+
+  public async deleteProperty(agencyId: number, propertyId: number) {
+
+    const properties = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        Properties: {
+          delete: {
+            id: propertyId
+          }
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'deleted'
+  
+  }
+
+  public async listAllCities(id: number){
+
+    const cities:Array<string> = await this.geoApiService.listAllCities()
+
+    const realtor = await this.prisma.agency.findUnique({ where: { id }, include:{ AgencyCities: {include: { City: true}}}})
+
+    const removeCities = new Set(realtor.AgencyCities.map(item => item.City.name))
+
+    const allCities = cities.filter(item => {
+
+      return !removeCities.has(item)
+    
+    })
+
+    return allCities
+
+  }
+
+  public async addCity(name: string, id:number){
+
+    const dbCity = await this.prisma.city.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbCity) {
+
+      const newCity = await this.prisma.city.create({ data:{ name }})
+
+      const agencyCity = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyCities:{
+            create:{
+              City:{
+                connect:{
+                  id: newCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyCity) return 'updated'
+    
+    }else{
+
+      const agencyCity = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyCities:{
+            create:{
+              City:{
+                connect:{
+                  id: dbCity.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyCity) return 'updated'
+    
+    }
+  
+  }
+
+  public async deleteCity(agencyId: number, cityId:number){
+
+    const agencyCities = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        AgencyCities: {
+          delete: {
+            id: cityId
+          }
+        }
+      },
+      select: {
+        AgencyCities: true
+      }
+    })
+
+    if (agencyCities) return 'deleted'
+
+  }
+
+  public async findAllComments(id: number) {
+
+    const { Comments } = await this.prisma.agency.findUnique({
+      where: {
+        id
+      },
+      select: {
+        Comments: {
+          include: {
+            Client: true
+          }
+        }
+      }
+    })
+
+    const averageComments = Comments.map((comment) => {
+
+      return {
+        id: comment.id,
+        clientId: comment.clientId,
+        clientName: comment.Client.firstName + ' ' + comment.Client.lastName,
+        rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4,
+        text: comment.text
+      }
+    
+    })
+
+    return averageComments
+  
+  }
+
+  public async addLanguage(name:string, id: number){
+
+    const agency = await this.prisma.agency.findUnique({
+      where:{
+        id
+      },
+      include:{
+        AgencyLanguages:{
+          include:{
+            Language: true
+          }
+        }
+      }
+    })
+
+    if(agency.AgencyLanguages.map(item => item.Language.name).includes(name)) return 'updated'
+
+    const dbLanguage = await this.prisma.language.findUnique({
+      where: {
+        name
+      }
+    })
+
+    if(!dbLanguage) {
+
+      const newLanguage = await this.prisma.language.create({ data:{ name }})
+
+      const agencyLanguage = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyLanguages:{
+            create:{ 
+              Language:{
+                connect:{
+                  id: newLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyLanguage) return 'updated'
+    
+    }else{
+
+      const agencyLanguage = await this.prisma.agency.update({
+        where:{
+          id
+        },
+        data:{
+          AgencyLanguages:{
+            create:{
+              Language:{
+                connect:{
+                  id: dbLanguage.id
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if(agencyLanguage) return 'updated'
+    
+    }
+
+  }
+
+  public async deleteLanguage(agencyId: number, languageId:number){
+
+    const agencyLanguages = await this.prisma.agency.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        AgencyLanguages: {
+          delete: {
+            id: languageId
+          }
+        }
+      },
+      select: {
+        AgencyLanguages: true
+      }
+    })
+
+    if (agencyLanguages) return 'deleted'
 
   }
 

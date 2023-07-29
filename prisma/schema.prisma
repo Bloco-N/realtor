@@ -43,14 +43,20 @@ enum Preservation {
 }
 
 model Client {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  firstName String
-  lastName  String
-  verified  Boolean   @default(false)
-  Sale      Sale[]
-  Comment   Comment[]
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  password        String
+  firstName       String
+  lastName        String
+  phone           String?
+  country         String?
+  city            String?
+  address         String?
+  zipCode         String?
+  verified        Boolean   @default(false)
+  Sale            Sale[]
+  Comment         Comment[]
+  CommentAgency   CommentAgency[]
 
   @@map("clients")
 }
@@ -105,13 +111,16 @@ model Agency {
   facebook           String?
   professional_email String?
   website            String?
+  address            String?
   verified           Boolean          @default(false)
   addressId          Int?
   Address            Address?         @relation(fields: [addressId], references: [id])
   Partnerships       Partnership[]
   Properties         Property[]
-  AgencyCity         AgencyCity[]
-  AgencyLanguage     AgencyLanguage[]
+  AgencyCities       AgencyCity[]
+  AgencyLanguages    AgencyLanguage[]
+  AgencyServices     AgencyService[]
+  Comments           CommentAgency[]
 
   @@map("agencies")
 }
@@ -120,6 +129,7 @@ model Service {
   id              Int              @id @default(autoincrement())
   title           String
   RealtorServices RealtorService[]
+  AgencieServices AgencyService[]
 
   @@map("services")
 }
@@ -132,6 +142,16 @@ model RealtorService {
   Service   Service @relation(fields: [serviceId], references: [id])
 
   @@map("realtor_services")
+}
+
+model AgencyService {
+  id        Int     @id @default(autoincrement())
+  agencyId  Int
+  serviceId Int
+  Agency    Agency  @relation(fields: [agencyId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("agencie_services")
 }
 
 model City {
@@ -148,7 +168,7 @@ model Language {
   id               Int               @id @default(autoincrement())
   name             String            @unique
   RealtorLanguages RealtorLanguage[]
-  AgencyLanguage   AgencyLanguage[]
+  AgencyLanguages   AgencyLanguage[]
 
   @@map("languages")
 }
@@ -186,6 +206,21 @@ model Comment {
   Client    Client  @relation(fields: [clientId], references: [id])
 
   @@map("comments")
+}
+
+model CommentAgency {
+  id        Int     @id @default(autoincrement())
+  agencyId  Int
+  clientId  Int
+  text      String
+  marketExpertiseRating               Float
+  responsivenessRating                Float
+  negotiationSkillsRating             Float
+  profissionalismAndComunicationRating Float
+  Agency    Agency  @relation(fields: [agencyId], references: [id])
+  Client    Client  @relation(fields: [clientId], references: [id])
+
+  @@map("comments_agency")
 }
 
 model Award {
@@ -280,7 +315,7 @@ model AgencyLanguage {
   id         Int      @id @default(autoincrement())
   agencyId   Int
   languageId Int
-  Lenguage   Language @relation(fields: [languageId], references: [id])
+  Language   Language @relation(fields: [languageId], references: [id])
   Agency     Agency   @relation(fields: [agencyId], references: [id])
 
   @@map("agency_languages")

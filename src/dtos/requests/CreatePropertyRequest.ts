@@ -12,3 +12,16 @@ export interface CreatePropertyRequest {
   }
   realtorId: number
 }
+
+export interface CreatePropertyRequestAgency {
+  propertyData: {
+    title: string
+    link: string
+    profilePicture: string
+    realtorId: number
+    price: string
+    propertyType: PropertyType
+    preservation: Preservation
+  }
+  agencyId: number
+}

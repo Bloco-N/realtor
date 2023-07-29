@@ -46,4 +46,38 @@ export class ServiceController {
   
   }
 
+  public async listAllByAgency(req: Request, res: Response) {
+
+    const {
+      params: { agencyId }
+    } = req
+
+    const services = await this.repository.findAllByAgency(Number(agencyId))
+
+    res.status(200).json(services)
+  
+  }
+
+  public async createAgencyService(req: Request, res: Response) {
+
+    const { body } = req
+
+    const created = await this.repository.createAgencyService(body.agencyId, body.serviceId)
+
+    res.status(200).send(created)
+  
+  }
+
+  public async removeAgencyService(req: Request, res: Response) {
+
+    const {
+      params: { id }
+    } = req
+
+    const removed = await this.repository.removeAgencyService(Number(id))
+
+    res.status(200).send(removed)
+  
+  }
+
 }

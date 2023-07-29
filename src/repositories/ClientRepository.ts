@@ -1,15 +1,15 @@
 
-import { CreateClientRequest }  from '../dtos/requests/CreateClientRequest'
-import { CreateCommentRequest } from '../dtos/requests/CreateCommentRequest'
-import { SignInClientRequest }  from '../dtos/requests/SingInClientRequest'
-import { UpdateClientRequest }  from '../dtos/requests/UpdateClientRequest'
-import { ClientResponse }       from '../dtos/responses/ClientResponse'
-import { PaginationResponse }   from '../dtos/responses/PaginationResponse'
-import { ApiError }             from '../errors/ApiError'
-import { Prisma, PrismaClient } from '@prisma/client'
-import { compare, hash }        from 'bcryptjs'
-import { sign }                 from 'jsonwebtoken'
-import { MailService }          from '../services/MailService'
+import { CreateClientRequest }                              from '../dtos/requests/CreateClientRequest'
+import { CreateCommentRequest, CreateCommentRequestAgency } from '../dtos/requests/CreateCommentRequest'
+import { SignInClientRequest }                              from '../dtos/requests/SingInClientRequest'
+import { UpdateClientRequest }                              from '../dtos/requests/UpdateClientRequest'
+import { ClientResponse }                                   from '../dtos/responses/ClientResponse'
+import { PaginationResponse }                               from '../dtos/responses/PaginationResponse'
+import { ApiError }                                         from '../errors/ApiError'
+import { Prisma, PrismaClient }                             from '@prisma/client'
+import { compare, hash }                                    from 'bcryptjs'
+import { sign }                                             from 'jsonwebtoken'
+import { MailService }                                      from '../services/MailService'
 
 export class ClientRepository {
 
@@ -64,8 +64,7 @@ export class ClientRepository {
   public async get(id: number): Promise<ClientResponse> {
 
     const client = await this.prisma.client.findUnique({
-      where: { id },
-      select: this.select
+      where: { id }
     })
 
     if (!client) throw new ApiError(404, 'client not found')
@@ -167,6 +166,16 @@ export class ClientRepository {
   
   }
 
+  public async addCommentAgency(data: CreateCommentRequestAgency){
+
+    const comment = await this.prisma.commentAgency.create({
+      data
+    })
+
+    if(comment) return 'created'
+  
+  }
+
   public async deleteComment(clientId: number, commentId: number){
 
     const deleted = await this.prisma.client.update({
@@ -175,6 +184,25 @@ export class ClientRepository {
       },
       data:{
         Comment:{
+          delete:{
+            id:commentId
+          }
+        }
+      }
+    })
+
+    if(deleted) return 'deleted'
+
+  }
+
+  public async deleteCommentAgency(clientId: number, commentId: number){
+
+    const deleted = await this.prisma.client.update({
+      where:{
+        id: clientId
+      },
+      data:{
+        CommentAgency:{
           delete:{
             id:commentId
           }
