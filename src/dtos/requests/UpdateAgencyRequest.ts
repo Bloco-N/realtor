@@ -8,6 +8,7 @@ export interface UpdateAgencyRequest {
   twitter?: string
   professional_email?: string
   website?: string
+  adress?:string
   user: {
     id: number
     email: string
