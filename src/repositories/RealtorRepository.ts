@@ -14,6 +14,7 @@ import { sign }                     from 'jsonwebtoken'
 import { timeSince }                from '../utils/timeSince'
 import { GeoApiService }            from '../services/GeoApiService'
 import { MailService }              from '../services/MailService'
+import { UpdateCommentRequest }     from '../dtos/requests/UpdateCommentRequest'
 
 export class RealtorRepository {
 
@@ -514,26 +515,44 @@ export class RealtorRepository {
       return{
         list: agenciePartnerships.map((partnership) => {
   
-          const initDate = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
-          const endDate = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+          const initDatePt = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
+          const endDatePt = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+
+          const initDateEn = partnership.init.toLocaleString('en', { month: 'short', year: 'numeric'})
+          const endDateEn = partnership.end ? partnership.end.toLocaleString('en', { month: 'short', year:'numeric' }) : 'present'
+
+          const initDateEs = partnership.init.toLocaleString('es', { month: 'short', year: 'numeric'})
+          const endDateEs = partnership.end ? partnership.end.toLocaleString('es', { month: 'short', year:'numeric'}) : 'hasta el momento'
   
           // const end = partnership.end ? partnership.end.getTime() : Date.now()
   
           // const period = ((end - partnership.init.getTime()) / 1000) * 60 * 60 * 24 * 30
-          let period = ''
-          period = timeSince(partnership.init)
+          let periodPt = ''
+          let periodEn = ''
+          let periodEs = ''
+          periodPt = timeSince('pt', partnership.init)
+          periodEn = timeSince('en', partnership.init)
+          periodEs = timeSince('es', partnership.init)
           if(partnership.end){
   
-            period = timeSince(partnership.init, partnership.end)
+            periodPt = timeSince('pt', partnership.init, partnership.end)
+            periodEn = timeSince('en', partnership.init, partnership.end)
+            periodEs = timeSince('es', partnership.init, partnership.end)
           
           }
-          const workTime = `${initDate} - ${endDate} - ${period}`
+          const workTimePt = `${initDatePt} - ${endDatePt} - ${periodPt}`
+          const workTimeEn = `${initDateEn} - ${endDateEn} - ${periodEn}`
+          const workTimeEs = `${initDateEs} - ${endDateEs} - ${periodEs}`
   
           return {
             id: partnership.id,
             title: partnership.title,
             agency: partnership.agency,
-            workTime: workTime
+            workTime: {
+              pt: workTimePt,
+              en: workTimeEn,
+              es: workTimeEs
+            }
           }
         
         }),
@@ -620,12 +639,26 @@ export class RealtorRepository {
         clientId: comment.clientId,
         clientName: comment.Client.firstName + ' ' + comment.Client.lastName,
         rating: (comment.marketExpertiseRating + comment.negotiationSkillsRating + comment.profissionalismAndComunicationRating + comment.responsivenessRating) / 4,
-        text: comment.text
+        text: comment.text,
+        reply: comment.reply
       }
     
     })
 
     return averageComments
+  
+  }
+
+  public async updateComment(id:number, data: UpdateCommentRequest){
+
+    const comment = await this.prisma.comment.update({
+      where:{
+        id
+      },
+      data
+    })
+
+    if(comment) return 'updated'
   
   }
 

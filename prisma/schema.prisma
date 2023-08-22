@@ -198,6 +198,7 @@ model Comment {
   realtorId Int
   clientId  Int
   text      String
+  reply     String?
   marketExpertiseRating               Float
   responsivenessRating                Float
   negotiationSkillsRating             Float

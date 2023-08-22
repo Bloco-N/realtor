@@ -91,6 +91,7 @@ router.delete('/partnership/:partnershipId', auth.realtorAuth, realtorController
 
 router.get('/comment/realtor/:realtorId', realtorController.listAllComments.bind(realtorController))
 router.get('/comment/agency/:agencyId', agencyController.listAllComments.bind(agencyController))
+router.put('/comment/realtor/:commentId', realtorController.updateComment.bind(realtorController))
 
 router.post('/comment/realtor', clientController.addComment.bind(clientController))
 router.delete('/comment/realtor/:commentId', auth.realtorAuth, clientController.removeComment.bind(clientController))

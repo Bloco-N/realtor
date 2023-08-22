@@ -432,6 +432,26 @@ export class RealtorController {
   
   }
 
+  public async updateComment(req:Request, res:Response){
+
+    try {
+
+      const { commentId } = req.params
+
+      const { body } = req
+      
+      const updated = await this.repository.updateComment(Number(commentId), body)
+
+      res.status(200).send(updated)
+      
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+
+  }
+
   public async listAllCities(req: Request, res:Response){
 
     try {
