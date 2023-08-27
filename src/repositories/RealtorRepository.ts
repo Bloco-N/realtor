@@ -84,7 +84,7 @@ export class RealtorRepository {
 
     const realtorsWithRating = realtors.map((realtor) => {
 
-      let rating = 5
+      let rating = 0
 
       if(realtor.Comments.length > 0){
 
@@ -137,7 +137,7 @@ export class RealtorRepository {
       }
     })
 
-    let rating = 5
+    let rating = 0
 
     if(realtor.Comments.length > 0){
       
