@@ -78,6 +78,16 @@ export class RealtorRepository {
           include:{
             Agency: true
           }
+        },
+        RealtorCities: {
+          include: {
+            City: true
+          }
+        },
+        RealtorLanguages:{
+          include:{
+            Language: true
+          }
         }
       }
     })
