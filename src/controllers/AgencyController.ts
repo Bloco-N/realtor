@@ -67,6 +67,25 @@ export class AgencyController {
   
   }
 
+  public async signInGoogle(req: Request, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      console.log(body)
+      //const token = await this.repository.signIn(body)
+
+      //res.status(200).send(token)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async get(req: Request, res: Response) {
 
     try {

@@ -6,6 +6,7 @@ import { Auth }                from './middlewares/Auth'
 import ListAllValidationSchema from './validationSchemas/ListAllValidationSchema'
 import { Router }              from 'express'
 import { checkSchema }         from 'express-validator'
+const passport = require('passport')
 
 const router = Router()
 const realtorController = new RealtorController()
@@ -61,6 +62,7 @@ router.post('/agency/sign-in', agencyController.signIn.bind(agencyController))
 router.post('/agency/sign-up', agencyController.add.bind(agencyController))
 router.put('/agency', auth.realtorAuth, agencyController.update.bind(agencyController))
 router.delete('/agency/:id', agencyController.remove.bind(agencyController))
+router.post('/agency/sign-in/google', agencyController.signInGoogle.bind(agencyController))
 
 router.get('/client', clientController.listAll.bind(clientController))
 router.get('/client/:id', clientController.get.bind(clientController))
@@ -108,5 +110,33 @@ router.delete('/service/realtor/:id', auth.realtorAuth, serviceController.remove
 router.get('/service/agenct/:agencyId', serviceController.listAllByAgency.bind(serviceController))
 router.post('/service/agency', serviceController.createAgencyService.bind(serviceController))
 router.delete('/service/agency/:id', auth.realtorAuth, serviceController.removeAgencyService.bind(serviceController))
+
+const CLIENT_URL= "http://localhost:3000/"
+
+router.get('/auth/login/failed', (req,res)=>{
+    console.log("FAIL")
+    res.status(401)
+})
+
+router.get('/auth/login/success', (req: any,res)=>{
+    console.log("SUCCESS")
+    if(req.user){
+        console.log(req.user)
+    }
+    res.status(401)
+})
+
+router.get('/auth/logout', (req: any,res)=>{
+    console.log("logout")
+    req.logout()
+    res.redirect(CLIENT_URL)
+})
+
+
+router.get('/auth/google', passport.authenticate('google', {scope:["profile"]}))
+router.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect: CLIENT_URL,
+    failureRedirect: "/login/failed"
+}))
 
 export { router }
