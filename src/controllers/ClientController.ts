@@ -219,9 +219,9 @@ export class ClientController {
   public async reportAnunce(req:Request, res:Response){
 
     try {
-      let descricao = "descricao do erro";
-      const { body:{ user,title,message } } = req;
-      const updated = await this.repository.reportAnunce(user,message);
+      
+      const { body:{ anuncio, descricao, name,idAnuncio,title,profile } } = req;
+      const updated = await this.repository.reportAnunce(anuncio, descricao, name,idAnuncio,title,profile);
       res.status(200).send(updated)
     
     } catch (error) {

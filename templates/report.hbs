@@ -38,14 +38,22 @@
 </head>
 <body>
 
-  <strong>Olá Administrador, o usuário{{name}}</strong>
+  <strong>Olá Administrador, o usuário {{name}}</strong>
 
   <p>
     Encontrou um anúncio errado no perfil <a href="https://www.meoagent.com/profile/realtor/{{idAnuncio}}" target="_blank"> {{profile}} </a>
   </p>
 
   <p>
+    Encontrou um anúncio errado no perfil <a href="http://localhost:3000/profile/realtor/{{idAnuncio}}" target="_blank"> {{profile}} </a>
+  </p>
+
+  <p>
     Título do anúncio {{title}}
+  </p>
+  <p>
+    Descrição do erro encontrado:
+    {{descricao}}
   </p>
 
 </body>

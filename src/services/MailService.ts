@@ -38,7 +38,7 @@ export class MailService{
   
   }
 
-  public sendMailReport(to:string, subject:string, name:string,idAnuncio:string,profile:string,title:string){
+  public sendMailReport(to:string, descricao:string, name:string,idAnuncio:string,profile:string,title:string){
 
     const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/report.hbs"), "utf-8")
     const template = handlebars.compile(emailTemplate)
@@ -47,6 +47,7 @@ export class MailService{
       idAnuncio,
       profile,
       title,
+      descricao
     }))
 
     sgMail.setApiKey(process.env.MAIL_KEY)
@@ -54,7 +55,7 @@ export class MailService{
     const msg = {
       to,
       from: 'meoagent.no.reply@gmail.com',
-      subject,
+      subject:'denúncia',
       html: msgBody
     }
 
