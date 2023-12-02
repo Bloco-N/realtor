@@ -350,7 +350,7 @@ export class RealtorRepository {
       data: {
         Properties: {
           create: propertyData
-        }
+        }                                                                              
       },
       select: {
         Properties: true
