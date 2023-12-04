@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meoagent: Denúncia de anúncio</title>
+  <link rel="stylesheet" href="./recover.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap');
+
+    *{
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    :root{
+      font-family: 'Quicksand';
+    }
+
+    body{
+      background-color: #FFF;
+      color: #454545;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100vh;
+    }
+
+    a{
+      color: #2e6b89;
+    }
+  </style>
+</head>
+<body>
+
+  <strong>Olá Administrador, o usuário {{name}}</strong>
+
+  <p>
+    Encontrou um anúncio errado no perfil <a href="https://www.meoagent.com/profile/realtor/{{idAnuncio}}" target="_blank"> {{profile}} </a>
+  </p>
+
+  <p>
+    Encontrou um anúncio errado no perfil <a href="http://localhost:3000/profile/realtor/{{idAnuncio}}" target="_blank"> {{profile}} </a>
+  </p>
+
+  <p>
+    Título do anúncio {{title}}
+  </p>
+  <p>
+    Descrição do erro encontrado:
+    {{descricao}}
+  </p>
+
+</body>
+</html>

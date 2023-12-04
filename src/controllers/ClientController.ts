@@ -216,6 +216,22 @@ export class ClientController {
   
   }
 
+  public async reportAnunce(req:Request, res:Response){
+
+    try {
+      
+      const { body:{ anuncio, descricao, name,idAnuncio,title,profile } } = req;
+      const updated = await this.repository.reportAnunce(anuncio, descricao, name,idAnuncio,title,profile);
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async updatePassword(req:Request, res:Response){
 
     try {
