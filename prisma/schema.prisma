@@ -26,6 +26,10 @@ enum EnergyEfficience {
   D
   E
   F
+  G
+  H
+  I
+  J
 }
 
 enum PropertyType {
