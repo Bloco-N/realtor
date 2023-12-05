@@ -48,13 +48,13 @@ export class RealtorRepository {
         OR: [
           {
             firstName: {
-              contains: search.split(' ')[0],
+              contains: search,
               mode: 'insensitive'
             }
           },
           {
             lastName: {
-              contains: search.split(' ')[search.split(' ').length-1],
+              contains: search,
               mode: 'insensitive'
             }
           }
@@ -350,7 +350,7 @@ export class RealtorRepository {
       data: {
         Properties: {
           create: propertyData
-        }                                                                              
+        }
       },
       select: {
         Properties: true

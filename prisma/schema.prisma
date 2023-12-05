@@ -17,21 +17,6 @@ enum Fluency {
   NATIVE
 }
 
-enum EnergyEfficience {
-  AP
-  A
-  B
-  Bm
-  C
-  D
-  E
-  F
-  G
-  H
-  I
-  J
-}
-
 enum PropertyType {
   HOME
   APARTMENT
@@ -278,7 +263,6 @@ model Property {
   Agency         Agency?      @relation(fields: [agencyId], references: [id])
   realtorId      Int?
   agencyId       Int?
-  energyefficience EnergyEfficience
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

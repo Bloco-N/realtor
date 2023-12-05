@@ -251,25 +251,6 @@ export class ClientRepository {
   
   }
 
-  public async reportAnunce(anuncio:string, descricao:string, name:string,idAnuncio:string,title:string,profile:string){
-    
-    
-    if(true){
-
-      
-
-      //this.mailService.sendMail('henreke@hotmail.com', anuncio+' '+descricao, 'Primeiro nome', 'token', 'client')
-      this.mailService.sendMailReport('henreke@hotmail.com',descricao,name,idAnuncio,profile,title);
-      return 'email sended'
-
-    }else{
-
-      throw new ApiError(404, 'not found')
-    
-    }
-  
-  }
-
   public async verifyAccount(email:string){
 
     const client = await this.prisma.client.findUnique({where:{email}}) 
