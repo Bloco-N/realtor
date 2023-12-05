@@ -69,8 +69,6 @@ router.post('/client/sign-up', clientController.add.bind(clientController))
 router.put('/client', auth.realtorAuth, clientController.update.bind(clientController))
 router.delete('/client/:id', clientController.remove.bind(clientController))
 
-router.post('/denuncia',clientController.reportAnunce.bind(clientController))
-
 router.get('/property/realtor/:realtorId', realtorController.listAllProperties.bind(realtorController))
 router.post('/property/realtor', realtorController.addProperty.bind(realtorController))
 router.delete('/property/realtor/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
@@ -110,6 +108,5 @@ router.delete('/service/realtor/:id', auth.realtorAuth, serviceController.remove
 router.get('/service/agenct/:agencyId', serviceController.listAllByAgency.bind(serviceController))
 router.post('/service/agency', serviceController.createAgencyService.bind(serviceController))
 router.delete('/service/agency/:id', auth.realtorAuth, serviceController.removeAgencyService.bind(serviceController))
-
 
 export { router }

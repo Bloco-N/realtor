@@ -1,4 +1,4 @@
-import { EnergyEfficience, Preservation, PropertyType } from '@prisma/client'
+import { Preservation, PropertyType } from '@prisma/client'
 
 export interface CreatePropertyRequest {
   propertyData: {
@@ -9,7 +9,6 @@ export interface CreatePropertyRequest {
     price: string
     propertyType: PropertyType
     preservation: Preservation
-    energyefficience: EnergyEfficience
   }
   realtorId: number
 }
@@ -23,7 +22,6 @@ export interface CreatePropertyRequestAgency {
     price: string
     propertyType: PropertyType
     preservation: Preservation
-    energyefficience: EnergyEfficience
   }
   agencyId: number
 }
