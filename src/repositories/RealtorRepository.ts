@@ -199,6 +199,32 @@ export class RealtorRepository {
   
   }
 
+  public async signInGoogle(data: SignInRealtorRequest): Promise<string> {
+
+    const { email } = data
+
+    const  realtor  = await this.prisma.realtor.findUnique({
+      where: {
+        email
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true
+      }
+    })
+
+    if (!realtor) throw new ApiError(404, 'realtor not found')
+
+    const token = sign(realtor, process.env.API_SECRET, {
+      expiresIn: '8h'
+    })
+
+    return token
+  
+  }
+
   public async create(data: CreateRealtorRequest): Promise<string> {
 
     const { password, ...realtorData } = data
