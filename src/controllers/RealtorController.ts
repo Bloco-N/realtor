@@ -63,6 +63,25 @@ export class RealtorController {
     
     }
   
+  } 
+  
+  public async signInGoogle(req: Request, res: Response) {
+
+    try {
+
+      const { body } = req
+      console.log("PEdro 1")
+
+      const token = await this.repository.signInGoogle(body)
+
+      res.status(200).send(token)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
   }
 
   public async get(req: Request, res: Response) {
@@ -119,6 +138,7 @@ export class RealtorController {
     try {
 
       const { id } = req.params
+      console.log(id)
       const realtor = await this.repository.delete(Number(id))
 
       res.status(200).send(realtor)

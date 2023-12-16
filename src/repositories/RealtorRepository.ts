@@ -15,6 +15,8 @@ import { timeSince }                from '../utils/timeSince'
 import { GeoApiService }            from '../services/GeoApiService'
 import { MailService }              from '../services/MailService'
 import { UpdateCommentRequest }     from '../dtos/requests/UpdateCommentRequest'
+import { SingInGoogleRequest } from '../dtos/requests/SingInGoogleRequest'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 export class RealtorRepository {
 
@@ -199,31 +201,42 @@ export class RealtorRepository {
   
   }
 
-  public async signInGoogle(data: SignInRealtorRequest): Promise<string> {
-
-    const { email } = data
-
-    const  realtor  = await this.prisma.realtor.findUnique({
-      where: {
-        email
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true
-      }
-    })
-
-    if (!realtor) throw new ApiError(404, 'realtor not found')
-
-    const token = sign(realtor, process.env.API_SECRET, {
-      expiresIn: '8h'
-    })
-
-    return token
+  public async signInGoogle(data: SingInGoogleRequest): Promise<string> {
+    const { email } = data;
+    
+      const realtorExists = await this.prisma.realtor.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      });
   
+      if (!realtorExists) {
+        const newRelator = await this.prisma.realtor.create({
+          data: {
+            ...data,
+          },
+        });
+  
+        const token = sign(newRelator, process.env.API_SECRET, {
+          expiresIn: '8h',
+        });
+  
+        return token;
+      }
+  
+      const token = sign(realtorExists, process.env.API_SECRET, {
+        expiresIn: '8h',
+      });
+  
+      return token;
   }
+
 
   public async create(data: CreateRealtorRequest): Promise<string> {
 

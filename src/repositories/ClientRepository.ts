@@ -3,6 +3,7 @@ import { CreateClientRequest }                              from '../dtos/reques
 import { CreateCommentRequest, CreateCommentRequestAgency } from '../dtos/requests/CreateCommentRequest'
 import { SignInClientRequest }                              from '../dtos/requests/SingInClientRequest'
 import { UpdateClientRequest }                              from '../dtos/requests/UpdateClientRequest'
+import { SingInGoogleRequest }                              from '../dtos/requests/SingInGoogleRequest'
 import { ClientResponse }                                   from '../dtos/responses/ClientResponse'
 import { PaginationResponse }                               from '../dtos/responses/PaginationResponse'
 import { ApiError }                                         from '../errors/ApiError'
@@ -10,6 +11,7 @@ import { Prisma, PrismaClient }                             from '@prisma/client
 import { compare, hash }                                    from 'bcryptjs'
 import { sign }                                             from 'jsonwebtoken'
 import { MailService }                                      from '../services/MailService'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 export class ClientRepository {
 
@@ -102,6 +104,51 @@ export class ClientRepository {
 
     return token
   
+  }
+
+  public async signInGoogle(data: SingInGoogleRequest): Promise<string> {
+    const { email } = data;
+
+    try {
+      const clientExists = await this.prisma.client.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      });
+  
+      if (!clientExists) {
+        const newClient = await this.prisma.client.create({
+          data: {
+            ...data,
+          },
+        });
+  
+        const token = sign(newClient, process.env.API_SECRET, {
+          expiresIn: '8h',
+        });
+  
+        return token;
+      }
+  
+      const token = sign(clientExists, process.env.API_SECRET, {
+        expiresIn: '8h',
+      });
+  
+      return token;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        console.error('Endereço de e-mail duplicado.');
+      } else {
+        console.error('Erro ao criar/atualizar cliente:', error);
+      }
+      throw new Error('Erro durante o login com o Google.');
+    }
   }
 
   public async create(data: CreateClientRequest): Promise<string> {
