@@ -1,13 +1,300 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-// prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model Client {
+  id            Int             @id @default(autoincrement())
+  email         String          @unique
+  password      String?
+  firstName     String
+  lastName      String
+  verified      Boolean         @default(false)
+  address       String?
+  city          String?
+  country       String?
+  phone         String?
+  zipCode       String?
+  Comment       Comment[]
+  CommentAgency CommentAgency[]
+  Sale          Sale[]
+
+  @@map("clients")
+}
+
+model Realtor {
+  id                 Int               @id @default(autoincrement())
+  email              String            @unique
+  password           String?
+  firstName          String
+  lastName           String
+  introduction       String?
+  phone              String?
+  whatsapp           String?
+  instagram          String?
+  professional_email String?
+  website            String?
+  profilePicture     String?
+  facebook           String?
+  expTime            Int?
+  coverPicture       String?
+  phoneCountry       String?
+  wppCountry         String?
+  wppText            String?
+  verified           Boolean           @default(false)
+  Awards             Award[]
+  Comments           Comment[]
+  Courses            Course[]
+  Partnerships       Partnership[]
+  Properties         Property[]
+  RealtorCities      RealtorCity[]
+  RealtorLanguages   RealtorLanguage[]
+  RealtorServices    RealtorService[]
+  Sales              Sale[]
+
+  @@map("realtors")
+}
+
+model Agency {
+  id                 Int              @id @default(autoincrement())
+  email              String           @unique
+  password           String?
+  name               String           @unique
+  description        String?
+  phone              String?
+  whatsapp           String?
+  instagram          String?
+  professional_email String?
+  website            String?
+  addressId          Int?
+  facebook           String?
+  coverPicture       String?
+  profilePicture     String?
+  phoneCountry       String?
+  wppCountry         String?
+  wppText            String?
+  verified           Boolean          @default(false)
+  address            String?
+  AgencyServices     AgencyService[]
+  Address            Address?         @relation(fields: [addressId], references: [id])
+  AgencyCities       AgencyCity[]
+  AgencyLanguages    AgencyLanguage[]
+  Comments           CommentAgency[]
+  Partnerships       Partnership[]
+  Properties         Property[]
+
+  @@map("agencies")
+}
+
+model Service {
+  id              Int              @id @default(autoincrement())
+  title           String
+  AgencieServices AgencyService[]
+  RealtorServices RealtorService[]
+
+  @@map("services")
+}
+
+model RealtorService {
+  id        Int     @id @default(autoincrement())
+  realtorId Int
+  serviceId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("realtor_services")
+}
+
+model AgencyService {
+  id        Int     @id @default(autoincrement())
+  agencyId  Int
+  serviceId Int
+  Agency    Agency  @relation(fields: [agencyId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("agencie_services")
+}
+
+model City {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  Address     Address[]
+  AgencyCity  AgencyCity[]
+  RealtorCity RealtorCity[]
+
+  @@map("cities")
+}
+
+model Language {
+  id               Int               @id @default(autoincrement())
+  name             String            @unique
+  idLanguageName   Int
+  AgencyLanguages  AgencyLanguage[]
+  languageName     LanguageName      @relation(fields: [idLanguageName], references: [id])
+  RealtorLanguages RealtorLanguage[]
+
+  @@map("languages")
+}
+
+model LanguageName {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
+  Language Language[]
+
+  @@map("languagesName")
+}
+
+model Course {
+  id        Int     @id @default(autoincrement())
+  name      String
+  realtorId Int
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+
+  @@map("courses")
+}
+
+model Sale {
+  id        Int     @id @default(autoincrement())
+  realtorId Int
+  clientId  Int
+  confirmed Boolean @default(false)
+  Client    Client  @relation(fields: [clientId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+
+  @@map("sales")
+}
+
+model Comment {
+  id                                   Int     @id @default(autoincrement())
+  realtorId                            Int
+  clientId                             Int
+  text                                 String
+  marketExpertiseRating                Float
+  negotiationSkillsRating              Float
+  responsivenessRating                 Float
+  profissionalismAndComunicationRating Float
+  reply                                String?
+  Client                               Client  @relation(fields: [clientId], references: [id])
+  Realtor                              Realtor @relation(fields: [realtorId], references: [id])
+
+  @@map("comments")
+}
+
+model CommentAgency {
+  id                                   Int    @id @default(autoincrement())
+  agencyId                             Int
+  clientId                             Int
+  text                                 String
+  marketExpertiseRating                Float
+  responsivenessRating                 Float
+  negotiationSkillsRating              Float
+  profissionalismAndComunicationRating Float
+  Agency                               Agency @relation(fields: [agencyId], references: [id])
+  Client                               Client @relation(fields: [clientId], references: [id])
+
+  @@map("comments_agency")
+}
+
+model Award {
+  id        Int      @id @default(autoincrement())
+  realtorId Int?
+  title     String
+  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
+
+  @@map("awards")
+}
+
+model Partnership {
+  id        Int       @id @default(autoincrement())
+  init      DateTime
+  end       DateTime?
+  active    Boolean   @default(false)
+  realtorId Int
+  agencyId  Int?
+  agency    String
+  title     String
+  Agency    Agency?   @relation(fields: [agencyId], references: [id])
+  Realtor   Realtor   @relation(fields: [realtorId], references: [id])
+
+  @@map("partnerships")
+}
+
+model Property {
+  id             Int          @id @default(autoincrement())
+  link           String
+  realtorId      Int?
+  agencyId       Int?
+  title          String
+  profilePicture String?
+  createdAt      DateTime     @default(now())
+  grossArea      String?
+  preservation   Preservation
+  price          String
+  propertyType   PropertyType
+  rooms          Rooms?
+  updatedAt      DateTime     @updatedAt
+  usefulArea     String?
+  Agency         Agency?      @relation(fields: [agencyId], references: [id])
+  Realtor        Realtor?     @relation(fields: [realtorId], references: [id])
+
+  @@map("properties")
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  number     Int
+  street     String
+  cityId     Int
+  state      String
+  complement String
+  City       City     @relation(fields: [cityId], references: [id])
+  Agency     Agency[]
+
+  @@map("adresses")
+}
+
+model RealtorCity {
+  id        Int     @id @default(autoincrement())
+  cityId    Int
+  realtorId Int
+  City      City    @relation(fields: [cityId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+
+  @@map("realtor_cities")
+}
+
+model AgencyCity {
+  id       Int    @id @default(autoincrement())
+  cityId   Int
+  agencyId Int
+  Agency   Agency @relation(fields: [agencyId], references: [id])
+  City     City   @relation(fields: [cityId], references: [id])
+
+  @@map("agency_cities")
+}
+
+model RealtorLanguage {
+  id         Int      @id @default(autoincrement())
+  realtorId  Int
+  languageId Int
+  Language   Language @relation(fields: [languageId], references: [id])
+  Realtor    Realtor  @relation(fields: [realtorId], references: [id])
+
+  @@map("realtor_languages")
+}
+
+model AgencyLanguage {
+  id         Int      @id @default(autoincrement())
+  agencyId   Int
+  languageId Int
+  Agency     Agency   @relation(fields: [agencyId], references: [id])
+  Language   Language @relation(fields: [languageId], references: [id])
+
+  @@map("agency_languages")
 }
 
 enum Fluency {
@@ -40,284 +327,4 @@ enum Preservation {
   NEW_BUILDING
   GOOD
   TO_RECOVER
-}
-
-model Client {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  password      String?
-  firstName     String
-  lastName      String
-  phone         String?
-  country       String?
-  city          String?
-  address       String?
-  zipCode       String?
-  verified      Boolean         @default(false)
-  Sale          Sale[]
-  Comment       Comment[]
-  CommentAgency CommentAgency[]
-
-  @@map("clients")
-}
-
-model Realtor {
-  id                 Int               @id @default(autoincrement())
-  email              String            @unique
-  password           String?
-  firstName          String
-  lastName           String
-  wppText            String?
-  profilePicture     String?
-  coverPicture       String?
-  introduction       String?
-  phone              String?
-  whatsapp           String?
-  phoneCountry       String?
-  wppCountry         String?
-  instagram          String?
-  facebook           String?
-  professional_email String?
-  website            String?
-  expTime            Int?
-  verified           Boolean           @default(false)
-  RealtorServices    RealtorService[]
-  Partnerships       Partnership[]
-  Awards             Award[]
-  Courses            Course[]
-  Sales              Sale[]
-  Comments           Comment[]
-  Properties         Property[]
-  RealtorLanguages   RealtorLanguage[]
-  RealtorCities      RealtorCity[]
-
-  @@map("realtors")
-}
-
-model Agency {
-  id                 Int              @id @default(autoincrement())
-  email              String           @unique
-  password           String?
-  name               String           @unique
-  wppText            String?
-  profilePicture     String?
-  coverPicture       String?
-  phoneCountry       String?
-  wppCountry         String?
-  description        String?
-  phone              String?
-  whatsapp           String?
-  instagram          String?
-  facebook           String?
-  professional_email String?
-  website            String?
-  address            String?
-  verified           Boolean          @default(false)
-  addressId          Int?
-  Address            Address?         @relation(fields: [addressId], references: [id])
-  Partnerships       Partnership[]
-  Properties         Property[]
-  AgencyCities       AgencyCity[]
-  AgencyLanguages    AgencyLanguage[]
-  AgencyServices     AgencyService[]
-  Comments           CommentAgency[]
-
-  @@map("agencies")
-}
-
-model Service {
-  id              Int              @id @default(autoincrement())
-  title           String
-  RealtorServices RealtorService[]
-  AgencieServices AgencyService[]
-
-  @@map("services")
-}
-
-model RealtorService {
-  id        Int     @id @default(autoincrement())
-  realtorId Int
-  serviceId Int
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
-  Service   Service @relation(fields: [serviceId], references: [id])
-
-  @@map("realtor_services")
-}
-
-model AgencyService {
-  id        Int     @id @default(autoincrement())
-  agencyId  Int
-  serviceId Int
-  Agency    Agency  @relation(fields: [agencyId], references: [id])
-  Service   Service @relation(fields: [serviceId], references: [id])
-
-  @@map("agencie_services")
-}
-
-model City {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
-  RealtorCity RealtorCity[]
-  Address     Address[]
-  AgencyCity  AgencyCity[]
-
-  @@map("cities")
-}
-
-model Language {
-  id               Int               @id @default(autoincrement())
-  name             String            @unique
-  RealtorLanguages RealtorLanguage[]
-  AgencyLanguages  AgencyLanguage[]
-
-  @@map("languages")
-}
-
-model Course {
-  id        Int     @id @default(autoincrement())
-  name      String
-  realtorId Int
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
-
-  @@map("courses")
-}
-
-model Sale {
-  id        Int     @id @default(autoincrement())
-  realtorId Int
-  clientId  Int
-  confirmed Boolean @default(false)
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
-  Client    Client  @relation(fields: [clientId], references: [id])
-
-  @@map("sales")
-}
-
-model Comment {
-  id                                   Int     @id @default(autoincrement())
-  realtorId                            Int
-  clientId                             Int
-  text                                 String
-  reply                                String?
-  marketExpertiseRating                Float
-  responsivenessRating                 Float
-  negotiationSkillsRating              Float
-  profissionalismAndComunicationRating Float
-  Realtor                              Realtor @relation(fields: [realtorId], references: [id])
-  Client                               Client  @relation(fields: [clientId], references: [id])
-
-  @@map("comments")
-}
-
-model CommentAgency {
-  id                                   Int    @id @default(autoincrement())
-  agencyId                             Int
-  clientId                             Int
-  text                                 String
-  marketExpertiseRating                Float
-  responsivenessRating                 Float
-  negotiationSkillsRating              Float
-  profissionalismAndComunicationRating Float
-  Agency                               Agency @relation(fields: [agencyId], references: [id])
-  Client                               Client @relation(fields: [clientId], references: [id])
-
-  @@map("comments_agency")
-}
-
-model Award {
-  id        Int      @id @default(autoincrement())
-  title     String
-  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
-  realtorId Int?
-
-  @@map("awards")
-}
-
-model Partnership {
-  id        Int       @id @default(autoincrement())
-  title     String
-  init      DateTime
-  end       DateTime?
-  agency    String
-  active    Boolean   @default(false)
-  Realtor   Realtor   @relation(fields: [realtorId], references: [id])
-  Agency    Agency?   @relation(fields: [agencyId], references: [id])
-  realtorId Int
-  agencyId  Int?
-
-  @@map("partnerships")
-}
-
-model Property {
-  id             Int          @id @default(autoincrement())
-  title          String
-  price          String
-  propertyType   PropertyType
-  grossArea      String?
-  usefulArea     String?
-  rooms          Rooms?
-  preservation   Preservation
-  link           String
-  profilePicture String?
-  Realtor        Realtor?     @relation(fields: [realtorId], references: [id])
-  Agency         Agency?      @relation(fields: [agencyId], references: [id])
-  realtorId      Int?
-  agencyId       Int?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  @@map("properties")
-}
-
-model Address {
-  id         Int      @id @default(autoincrement())
-  number     Int
-  street     String
-  cityId     Int
-  state      String
-  complement String
-  City       City     @relation(fields: [cityId], references: [id])
-  Agency     Agency[]
-
-  @@map("adresses")
-}
-
-model RealtorCity {
-  id        Int     @id @default(autoincrement())
-  cityId    Int
-  realtorId Int
-  City      City    @relation(fields: [cityId], references: [id])
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
-
-  @@map("realtor_cities")
-}
-
-model AgencyCity {
-  id       Int    @id @default(autoincrement())
-  cityId   Int
-  agencyId Int
-  City     City   @relation(fields: [cityId], references: [id])
-  Agency   Agency @relation(fields: [agencyId], references: [id])
-
-  @@map("agency_cities")
-}
-
-model RealtorLanguage {
-  id         Int      @id @default(autoincrement())
-  realtorId  Int
-  languageId Int
-  Realtor    Realtor  @relation(fields: [realtorId], references: [id])
-  Language   Language @relation(fields: [languageId], references: [id])
-
-  @@map("realtor_languages")
-}
-
-model AgencyLanguage {
-  id         Int      @id @default(autoincrement())
-  agencyId   Int
-  languageId Int
-  Language   Language @relation(fields: [languageId], references: [id])
-  Agency     Agency   @relation(fields: [agencyId], references: [id])
-
-  @@map("agency_languages")
 }

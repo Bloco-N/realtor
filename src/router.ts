@@ -105,6 +105,7 @@ router.delete('/comment/agency/:commentId', auth.realtorAuth, clientController.r
 router.get('/service', serviceController.listAll.bind(serviceController))
 
 router.get('/service/realtor/:realtorId', serviceController.listAllByRealtor.bind(serviceController))
+router.get('/service/language/:realtorId', serviceController.listLanguageName.bind(serviceController))
 router.post('/service/realtor', serviceController.createRealtorService.bind(serviceController))
 router.delete('/service/realtor/:id', auth.realtorAuth, serviceController.removeRealtorService.bind(serviceController))
 

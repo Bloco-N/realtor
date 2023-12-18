@@ -807,15 +807,16 @@ export class RealtorRepository {
 
   }
 
-  public async addLanguage(name:string, id: number){
+  public async addLanguage(name:string, id: number, idLanguageName:number){
+    console.log(name, id, idLanguageName, "PEdrooooo")
 
     const realtor = await this.prisma.realtor.findUnique({
-      where:{
+      where: {
         id
       },
-      include:{
-        RealtorLanguages:{
-          include:{
+      include: {
+        RealtorLanguages: {
+          include: {
             Language: true
           }
         }
@@ -832,7 +833,7 @@ export class RealtorRepository {
 
     if(!dbLanguage) {
 
-      const newLanguage = await this.prisma.language.create({ data:{ name }})
+      const newLanguage = await this.prisma.language.create({ data:{ name,  idLanguageName }})
 
       const realtorLanguage = await this.prisma.realtor.update({
         where:{

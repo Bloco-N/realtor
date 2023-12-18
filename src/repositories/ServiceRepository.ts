@@ -87,4 +87,23 @@ export class ServiceRepository {
   
   }
 
+  public async listLanguageName(id:number) {
+
+    const languages = await this.prisma.languageName.findMany({select: {name:true}})
+    console.log(languages, "teste")
+
+    const realtor = await this.prisma.realtor.findUnique({ where: { id }, include:{ RealtorLanguages: {include: { Language: true}}}})
+
+    const removeLanguage = new Set(realtor.RealtorLanguages.map(item => item.Language.name))
+
+    console.log(removeLanguage)
+
+    const allLanguage = languages.filter((item) => {
+      return !removeLanguage.has(item.name)
+    })
+    
+    return allLanguage
+
+  }
+
 }
