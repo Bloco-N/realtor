@@ -103,7 +103,7 @@ model RealtorService {
   id        Int     @id @default(autoincrement())
   realtorId Int
   serviceId Int
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
   Service   Service @relation(fields: [serviceId], references: [id])
 
   @@map("realtor_services")
@@ -152,7 +152,7 @@ model Course {
   id        Int     @id @default(autoincrement())
   name      String
   realtorId Int
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("courses")
 }
@@ -163,7 +163,7 @@ model Sale {
   clientId  Int
   confirmed Boolean @default(false)
   Client    Client  @relation(fields: [clientId], references: [id])
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("sales")
 }
@@ -179,7 +179,7 @@ model Comment {
   profissionalismAndComunicationRating Float
   reply                                String?
   Client                               Client  @relation(fields: [clientId], references: [id])
-  Realtor                              Realtor @relation(fields: [realtorId], references: [id])
+  Realtor                              Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
@@ -203,7 +203,7 @@ model Award {
   id        Int      @id @default(autoincrement())
   realtorId Int?
   title     String
-  Realtor   Realtor? @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor? @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("awards")
 }
@@ -218,7 +218,7 @@ model Partnership {
   agency    String
   title     String
   Agency    Agency?   @relation(fields: [agencyId], references: [id])
-  Realtor   Realtor   @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor   @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("partnerships")
 }
@@ -239,7 +239,7 @@ model Property {
   updatedAt      DateTime     @updatedAt
   usefulArea     String?
   Agency         Agency?      @relation(fields: [agencyId], references: [id])
-  Realtor        Realtor?     @relation(fields: [realtorId], references: [id])
+  Realtor        Realtor?     @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("properties")
 }
@@ -262,7 +262,7 @@ model RealtorCity {
   cityId    Int
   realtorId Int
   City      City    @relation(fields: [cityId], references: [id])
-  Realtor   Realtor @relation(fields: [realtorId], references: [id])
+  Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("realtor_cities")
 }
@@ -282,7 +282,7 @@ model RealtorLanguage {
   realtorId  Int
   languageId Int
   Language   Language @relation(fields: [languageId], references: [id])
-  Realtor    Realtor  @relation(fields: [realtorId], references: [id])
+  Realtor    Realtor  @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("realtor_languages")
 }

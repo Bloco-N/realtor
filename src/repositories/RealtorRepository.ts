@@ -74,11 +74,8 @@ export class RealtorRepository {
       : undefined 
 
   public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<RealtorResponse>> {
-    console.log(search)
 
     const where = this.where(search)
-
-    console.log(where, "Where")
 
     const totalOfRealtors = await this.prisma.realtor.count({ where })
 

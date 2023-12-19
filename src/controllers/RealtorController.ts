@@ -70,7 +70,6 @@ export class RealtorController {
     try {
 
       const { body } = req
-      console.log("PEdro 1")
 
       const token = await this.repository.signInGoogle(body)
 
@@ -138,7 +137,6 @@ export class RealtorController {
     try {
 
       const { id } = req.params
-      console.log(id)
       const realtor = await this.repository.delete(Number(id))
 
       res.status(200).send(realtor)
@@ -549,7 +547,6 @@ export class RealtorController {
     try {
 
       const body = req.body
-      console.log(body, "Pedroo")
       const updated = await this.repository.addLanguage(body.name,  Number(body.user.id))
 
       res.status(200).send(updated)

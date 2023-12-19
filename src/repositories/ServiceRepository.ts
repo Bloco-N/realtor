@@ -99,8 +99,6 @@ export class ServiceRepository {
 
     const removeLanguage = new Set(realtor.RealtorLanguages.map(item => item.Language.name))
 
-    console.log(removeLanguage)
-
     const allLanguage = newLanguages.filter((item) => {
       return !removeLanguage.has(item)
     })
