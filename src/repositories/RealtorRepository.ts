@@ -15,6 +15,7 @@ import { timeSince }                from '../utils/timeSince'
 import { GeoApiService }            from '../services/GeoApiService'
 import { MailService }              from '../services/MailService'
 import { UpdateCommentRequest }     from '../dtos/requests/UpdateCommentRequest'
+import { UpdatePropertyRequest } from '../dtos/requests/UpdatePropertyRequest'
 
 export class RealtorRepository {
 
@@ -38,6 +39,7 @@ export class RealtorRepository {
     profilePicture: true,
     expTime: true,
     coverPicture: true,
+    fullCoverPicture: true,
     phoneCountry: true,
     wppCountry: true,
     wppText: true
@@ -358,6 +360,31 @@ export class RealtorRepository {
     })
 
     if (properties) return 'created'
+  
+  }
+
+  public async updateProperty(propertyId: number, data: UpdatePropertyRequest) {
+
+    const { propertyData, realtorId } = data
+
+    const properties = await this.prisma.realtor.update({
+      where: {
+        id: realtorId
+      },
+      data: {
+        Properties: {
+          update: {
+            where: {id: propertyId},
+            data: propertyData
+          }
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'updated'
   
   }
 

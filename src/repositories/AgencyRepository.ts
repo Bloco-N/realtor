@@ -10,6 +10,7 @@ import { sign }                        from 'jsonwebtoken'
 import { MailService }                 from '../services/MailService'
 import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
 import { GeoApiService }               from '../services/GeoApiService'
+import { UpdatePropertyRequestAgency } from '../dtos/requests/UpdatePropertyRequest'
 
 export class AgencyRepository {
 
@@ -28,6 +29,7 @@ export class AgencyRepository {
     website: true,
     profilePicture: true,
     coverPicture: true,
+    fullCoverPicture: true,
     phoneCountry: true,
     wppCountry: true,
     wppText: true,
@@ -296,6 +298,31 @@ export class AgencyRepository {
     })
 
     if (properties) return 'created'
+  
+  }
+
+  public async updateProperty(propertyId: number, data: UpdatePropertyRequestAgency) {
+
+    const { propertyData, agencyId } = data
+
+    const properties = await this.prisma.realtor.update({
+      where: {
+        id: agencyId
+      },
+      data: {
+        Properties: {
+          update: {
+            where: {id: propertyId},
+            data: propertyData
+          }
+        }
+      },
+      select: {
+        Properties: true
+      }
+    })
+
+    if (properties) return 'updated'
   
   }
 

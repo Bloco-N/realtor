@@ -230,6 +230,26 @@ export class RealtorController {
   
   }
 
+  public async updateProperty(req: Request, res: Response) {
+
+    try {
+
+      const { propertyId } = req.params
+
+      const { body } = req
+
+      const updated = await this.repository.updateProperty(parseInt(propertyId), body)
+
+      res.status(200).send(updated)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async removeProperty(req: Request, res: Response) {
 
     try {

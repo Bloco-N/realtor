@@ -85,6 +85,7 @@ model Realtor {
   wppText            String?
   profilePicture     String?
   coverPicture       String?
+  fullCoverPicture       String?
   introduction       String?
   phone              String?
   whatsapp           String?
@@ -117,6 +118,7 @@ model Agency {
   wppText            String?
   profilePicture     String?
   coverPicture       String?
+  fullCoverPicture   String?
   phoneCountry       String?
   wppCountry         String?
   description        String?

@@ -2,6 +2,7 @@ import { CreateAgencyRequest }         from '../dtos/requests/CreateAgencyReques
 import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
 import { ListAllAgencyQuery }          from '../dtos/requests/ListAllAgencyQuery'
 import { UpdateAgencyRequest }         from '../dtos/requests/UpdateAgencyRequest'
+import { UpdatePropertyRequestAgency } from '../dtos/requests/UpdatePropertyRequest'
 import { ApiError }                    from '../errors/ApiError'
 import errorHandling                   from '../handlers/errorHandling'
 import { AgencyRepository }            from '../repositories/AgencyRepository'
@@ -225,6 +226,26 @@ export class AgencyController {
       const created = await this.repository.addProperty(body)
 
       res.status(200).send(created)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
+  public async updateProperty(req: Request, res: Response) {
+
+    try {
+
+      const { propertyId } = req.params
+
+      const { body } = req
+
+      const updated = await this.repository.updateProperty(parseInt(propertyId), body)
+
+      res.status(200).send(updated)
     
     } catch (error) {
 
