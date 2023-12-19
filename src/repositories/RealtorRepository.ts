@@ -59,14 +59,26 @@ export class RealtorRepository {
               contains: search,
               mode: 'insensitive'
             }
+          },
+          {
+            RealtorCities: {
+              some: {
+                City: {
+                  name: search
+                }
+              }
+            }
           }
         ]
       }
-      : undefined
+      : undefined 
 
   public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<RealtorResponse>> {
+    console.log(search)
 
     const where = this.where(search)
+
+    console.log(where, "Where")
 
     const totalOfRealtors = await this.prisma.realtor.count({ where })
 
@@ -807,8 +819,13 @@ export class RealtorRepository {
 
   }
 
-  public async addLanguage(name:string, id: number, idLanguageName:number){
-    console.log(name, id, idLanguageName, "PEdrooooo")
+  public async addLanguage(name:string, id: number){
+
+    const idLanguageName = await this.prisma.languageName.findUnique({
+      where:{
+        name
+      }
+    })
 
     const realtor = await this.prisma.realtor.findUnique({
       where: {
@@ -833,7 +850,7 @@ export class RealtorRepository {
 
     if(!dbLanguage) {
 
-      const newLanguage = await this.prisma.language.create({ data:{ name,  idLanguageName }})
+      const newLanguage = await this.prisma.language.create({ data:{ name, idLanguageName:idLanguageName.id }})
 
       const realtorLanguage = await this.prisma.realtor.update({
         where:{

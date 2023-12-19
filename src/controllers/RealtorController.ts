@@ -550,7 +550,7 @@ export class RealtorController {
 
       const body = req.body
       console.log(body, "Pedroo")
-      const updated = await this.repository.addLanguage(body.name,  Number(body.user.id), +body.idLanguageName)
+      const updated = await this.repository.addLanguage(body.name,  Number(body.user.id))
 
       res.status(200).send(updated)
       
