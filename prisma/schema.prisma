@@ -7,6 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Fluency {
+  BASIC
+  INTERMEDIARY
+  FLUENT
+  NATIVE
+}
+
+enum EnergyEfficience {
+  AP
+  A
+  B
+  Bm
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+}
+
+enum PropertyType {
+  HOME
+  APARTMENT
+  NEW_BUILDING
+  OFFICE
+  COMMERCIAL
+  GARAGE
+  LAND
+  BUILDING
+  COLLECTION
+}
+
+enum Rooms {
+  T1
+  T2
+  T3
+  T4_PLUS
+}
+
+enum Preservation {
+  NEW_BUILDING
+  GOOD
+  TO_RECOVER
+}
+
 model Client {
   id            Int             @id @default(autoincrement())
   email         String          @unique
@@ -224,22 +271,23 @@ model Partnership {
 }
 
 model Property {
-  id             Int          @id @default(autoincrement())
-  link           String
-  realtorId      Int?
-  agencyId       Int?
-  title          String
-  profilePicture String?
-  createdAt      DateTime     @default(now())
-  grossArea      String?
-  preservation   Preservation
-  price          String
-  propertyType   PropertyType
-  rooms          Rooms?
-  updatedAt      DateTime     @updatedAt
-  usefulArea     String?
-  Agency         Agency?      @relation(fields: [agencyId], references: [id])
-  Realtor        Realtor?     @relation(fields: [realtorId], references: [id], onDelete: Cascade)
+  id               Int              @id @default(autoincrement())
+  link             String
+  realtorId        Int?
+  agencyId         Int?
+  title            String
+  profilePicture   String?
+  energyefficience EnergyEfficience
+  createdAt        DateTime         @default(now())
+  grossArea        String?
+  preservation     Preservation
+  price            String
+  propertyType     PropertyType
+  rooms            Rooms?
+  updatedAt        DateTime         @updatedAt
+  usefulArea       String?
+  Agency           Agency?          @relation(fields: [agencyId], references: [id])
+  Realtor          Realtor?         @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("properties")
 }
@@ -295,36 +343,4 @@ model AgencyLanguage {
   Language   Language @relation(fields: [languageId], references: [id])
 
   @@map("agency_languages")
-}
-
-enum Fluency {
-  BASIC
-  INTERMEDIARY
-  FLUENT
-  NATIVE
-}
-
-enum PropertyType {
-  HOME
-  APARTMENT
-  NEW_BUILDING
-  OFFICE
-  COMMERCIAL
-  GARAGE
-  LAND
-  BUILDING
-  COLLECTION
-}
-
-enum Rooms {
-  T1
-  T2
-  T3
-  T4_PLUS
-}
-
-enum Preservation {
-  NEW_BUILDING
-  GOOD
-  TO_RECOVER
 }

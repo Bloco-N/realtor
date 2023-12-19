@@ -50,13 +50,13 @@ export class RealtorRepository {
         OR: [
           {
             firstName: {
-              contains: search,
+              contains: search.split(' ')[0],
               mode: 'insensitive'
             }
           },
           {
             lastName: {
-              contains: search,
+              contains: search.split(' ')[search.split(' ').length-1],
               mode: 'insensitive'
             }
           },
