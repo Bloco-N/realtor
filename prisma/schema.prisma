@@ -1,6 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// prisma
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,6 +15,21 @@ enum Fluency {
   INTERMEDIARY
   FLUENT
   NATIVE
+}
+
+enum EnergyEfficience {
+  AP
+  A
+  B
+  Bm
+  C
+  D
+  E
+  F
+  G
+  H
+  I
+  J
 }
 
 enum PropertyType {
@@ -263,6 +278,7 @@ model Property {
   Agency         Agency?      @relation(fields: [agencyId], references: [id])
   realtorId      Int?
   agencyId       Int?
+  energyefficience EnergyEfficience
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

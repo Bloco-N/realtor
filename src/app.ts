@@ -34,7 +34,7 @@ export class App {
 
     this.server.listen(this.port, () => {
 
-      console.log('server runing in http://localhost:' + this.port)
+      console.log('server runing inn http://localhost:' + this.port)
     
     })
   
