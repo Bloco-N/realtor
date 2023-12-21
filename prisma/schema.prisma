@@ -179,9 +179,9 @@ model City {
 model Language {
   id               Int               @id @default(autoincrement())
   name             String            @unique
-  idLanguageName   Int
+  idLanguageName   Int?
   AgencyLanguages  AgencyLanguage[]
-  languageName     LanguageName      @relation(fields: [idLanguageName], references: [id])
+  languageName     LanguageName?     @relation(fields: [idLanguageName], references: [id])
   RealtorLanguages RealtorLanguage[]
 
   @@map("languages")
