@@ -206,7 +206,10 @@ export class ClientRepository {
   public async addComment(data: CreateCommentRequest){
 
     const comment = await this.prisma.comment.create({
-      data
+      data:{
+        ...data,
+        dateOftheDeed: new Date(`${data.dateOftheDeed} 00:00:00`)
+      }
     })
 
     if(comment) return 'created'

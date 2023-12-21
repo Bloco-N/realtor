@@ -147,7 +147,7 @@ export class ClientController {
     try {
 
       const { body } = req
-
+      console.log(body)
       const created = await this.repository.addComment(body)
 
       res.status(200).send(created)

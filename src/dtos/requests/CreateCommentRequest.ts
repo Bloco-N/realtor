@@ -6,6 +6,9 @@ export interface CreateCommentRequest {
   responsivenessRating: number
   negotiationSkillsRating: number
   profissionalismAndComunicationRating: number
+  sold?: number;
+  bought?: number;
+  dateOftheDeed?: number;
 }
 
 export interface CreateCommentRequestAgency {
