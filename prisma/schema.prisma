@@ -216,17 +216,20 @@ model Sale {
 }
 
 model Comment {
-  id                                   Int     @id @default(autoincrement())
+  id                                   Int       @id @default(autoincrement())
   realtorId                            Int
   clientId                             Int
+  sold                                 Int?
+  bought                               Int?
+  dateOftheDeed                        DateTime?
   text                                 String
   marketExpertiseRating                Float
   negotiationSkillsRating              Float
   responsivenessRating                 Float
   profissionalismAndComunicationRating Float
   reply                                String?
-  Client                               Client  @relation(fields: [clientId], references: [id])
-  Realtor                              Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
+  Client                               Client    @relation(fields: [clientId], references: [id])
+  Realtor                              Realtor   @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
