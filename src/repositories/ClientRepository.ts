@@ -205,6 +205,18 @@ export class ClientRepository {
 
   public async addComment(data: CreateCommentRequest){
 
+    const client = await this.prisma.client.findUnique({
+      where:{
+        id: data.clientId
+      }
+    })
+    // Pedro
+    // for (let key in client) {   
+    //   if (client[key] === null || client[key] === undefined || client[key] === false) {
+    //     return false;
+    //   }
+    // }
+
     const comment = await this.prisma.comment.create({
       data:{
         ...data,

@@ -140,6 +140,23 @@ export class RealtorRepository {
   }
 
   public async get(id: number): Promise<RealtorResponse> {
+    let soldContador = 0;
+    let boughtContador = 0;
+    
+    const soldOrBought = await this.prisma.comment.findMany({
+      where:{
+        realtorId: id
+      }
+    })
+
+    soldOrBought.forEach(obj => {
+      if (obj.sold === 1) {
+        soldContador++;
+      }
+      if (obj.bought === 1) {
+        boughtContador++;
+      }
+    });
 
     const realtor = await this.prisma.realtor.findUnique({
       where: { id },
@@ -174,7 +191,9 @@ export class RealtorRepository {
 
     return {
       ...realtor,
-      rating
+      rating,
+      sold: soldContador,
+      bought:boughtContador
     }
   
   }
