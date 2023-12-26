@@ -1,10 +1,10 @@
-import {}  from '../jobs/RealtorValidate';
+import {realtorAvailable}  from '../jobs/RealtorValidate';
 
 class ManagerCron{
  private jobs: any[]
 //dateAtestation, datePlayDay
   constructor(){
-    this.jobs = []
+    this.jobs = [realtorAvailable]
   }
 
   run(){
