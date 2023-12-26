@@ -108,7 +108,7 @@ export class MailService{
 
   public realtorValidation(to:string, subject:string, name:string, token:string, accType:string){
 
-    const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/verify.hbs"), "utf-8")
+    const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/realtorValidate.hbs"), "utf-8")
     const template = handlebars.compile(emailTemplate)
     const msgBody = (template({
       name,
