@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "languages" ADD COLUMN     "idLanguageName" INTEGER NOT NULL;
+ALTER TABLE "languages" ADD COLUMN     "idLanguageName" INTEGER;
 
 -- CreateTable
 CREATE TABLE "languagesName" (
