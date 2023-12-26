@@ -210,12 +210,12 @@ export class ClientRepository {
         id: data.clientId
       }
     })
-    // Pedro
-    // for (let key in client) {   
-    //   if (client[key] === null || client[key] === undefined || client[key] === false) {
-    //     return false;
-    //   }
-    // }
+
+    for (let key in client) {   
+      if (client[key] === null || client[key] === undefined || client[key] === false) {
+        return false;
+      }
+    }
 
     const comment = await this.prisma.comment.create({
       data:{
