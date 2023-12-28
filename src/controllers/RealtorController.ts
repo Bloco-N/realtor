@@ -63,6 +63,24 @@ export class RealtorController {
     
     }
   
+  } 
+  
+  public async signInGoogle(req: Request, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const token = await this.repository.signInGoogle(body)
+
+      res.status(200).send(token)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
   }
 
   public async get(req: Request, res: Response) {
@@ -529,8 +547,7 @@ export class RealtorController {
     try {
 
       const body = req.body
-
-      const updated = await this.repository.addLanguage(body.name, Number(body.user.id))
+      const updated = await this.repository.addLanguage(body.name,  Number(body.user.id))
 
       res.status(200).send(updated)
       

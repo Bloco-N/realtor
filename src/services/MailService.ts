@@ -63,6 +63,39 @@ export class MailService{
       .then(() => {
 
         console.log('Email sent')
+
+      })
+      .catch((err) => {
+
+        console.log(err)
+
+      })
+
+  }
+  
+  public verifyAccount(to:string, subject:string, name:string, token:string, accType:string){
+
+    const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/verify.hbs"), "utf-8")
+    const template = handlebars.compile(emailTemplate)
+    const msgBody = (template({
+      name,
+      token,
+      accType
+    }))
+
+    sgMail.setApiKey(process.env.MAIL_KEY)
+
+    const msg = {
+      to,
+      from: 'meoagent.no.reply@gmail.com',
+      subject,
+      html: msgBody
+    }
+
+    sgMail.send(msg)
+      .then(() => {
+
+        console.log('Email sent')
       
       })
       .catch((err) => {
@@ -73,9 +106,9 @@ export class MailService{
   
   }
 
-  public verifyAccount(to:string, subject:string, name:string, token:string, accType:string){
+  public realtorValidation(to:string, subject:string, name:string, token:string, accType:string){
 
-    const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/verify.hbs"), "utf-8")
+    const emailTemplate = fs.readFileSync(path.join(__dirname, "../../templates/realtorValidate.hbs"), "utf-8")
     const template = handlebars.compile(emailTemplate)
     const msgBody = (template({
       name,

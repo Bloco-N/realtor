@@ -1,6 +1,7 @@
 import { router } from './router'
 import cors       from 'cors'
 import express    from 'express'
+import ManagerCron from './services/ManagerCron'
 
 export class App {
 
@@ -14,7 +15,7 @@ export class App {
     this.server = express()
     this.middleware()
     this.router()
-  
+    this.cron()
   }
 
   private middleware() {
@@ -30,11 +31,15 @@ export class App {
   
   }
 
+  private async cron(): Promise<void> {
+    ManagerCron.run()
+  }
+
   public listen() {
 
     this.server.listen(this.port, () => {
 
-      console.log('server runing in http://localhost:' + this.port)
+      console.log('server runing inn http://localhost:' + this.port)
     
     })
   

@@ -58,6 +58,24 @@ export class ClientController {
   
   }
 
+  public async signInGoogle(req: Request, res: Response) {
+
+    try {
+
+      const { body } = req
+
+      const token = await this.repository.signInGoogle(body)
+
+      res.status(200).send(token)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async get(req: Request, res: Response) {
 
     try {
@@ -129,7 +147,7 @@ export class ClientController {
     try {
 
       const { body } = req
-
+      console.log(body)
       const created = await this.repository.addComment(body)
 
       res.status(200).send(created)
@@ -216,7 +234,7 @@ export class ClientController {
   
   }
 
-  public async reportAnunce(req:Request, res:Response){
+   public async reportAnunce(req:Request, res:Response){
 
     try {
 

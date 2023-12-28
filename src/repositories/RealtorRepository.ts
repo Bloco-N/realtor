@@ -15,6 +15,8 @@ import { timeSince }                from '../utils/timeSince'
 import { GeoApiService }            from '../services/GeoApiService'
 import { MailService }              from '../services/MailService'
 import { UpdateCommentRequest }     from '../dtos/requests/UpdateCommentRequest'
+import { SingInGoogleRequest } from '../dtos/requests/SingInGoogleRequest'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 export class RealtorRepository {
 
@@ -57,10 +59,19 @@ export class RealtorRepository {
               contains: search.split(' ')[search.split(' ').length-1],
               mode: 'insensitive'
             }
+          },
+          {
+            RealtorCities: {
+              some: {
+                City: {
+                  name: search
+                }
+              }
+            }
           }
         ]
       }
-      : undefined
+      : undefined 
 
   public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<RealtorResponse>> {
 
@@ -129,6 +140,23 @@ export class RealtorRepository {
   }
 
   public async get(id: number): Promise<RealtorResponse> {
+    let soldContador = 0;
+    let boughtContador = 0;
+    
+    const soldOrBought = await this.prisma.comment.findMany({
+      where:{
+        realtorId: id
+      }
+    })
+
+    soldOrBought.forEach(obj => {
+      if (obj.sold === 1) {
+        soldContador++;
+      }
+      if (obj.bought === 1) {
+        boughtContador++;
+      }
+    });
 
     const realtor = await this.prisma.realtor.findUnique({
       where: { id },
@@ -163,7 +191,9 @@ export class RealtorRepository {
 
     return {
       ...realtor,
-      rating
+      rating,
+      sold: soldContador,
+      bought:boughtContador
     }
   
   }
@@ -198,6 +228,43 @@ export class RealtorRepository {
     return token
   
   }
+
+  public async signInGoogle(data: SingInGoogleRequest): Promise<string> {
+    const { email } = data;
+    
+      const realtorExists = await this.prisma.realtor.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      });
+  
+      if (!realtorExists) {
+        const newRelator = await this.prisma.realtor.create({
+          data: {
+            ...data,
+          },
+        });
+  
+        const token = sign(newRelator, process.env.API_SECRET, {
+          expiresIn: '8h',
+        });
+  
+        return token;
+      }
+  
+      const token = sign(realtorExists, process.env.API_SECRET, {
+        expiresIn: '8h',
+      });
+  
+      return token;
+  }
+
 
   public async create(data: CreateRealtorRequest): Promise<string> {
 
@@ -350,7 +417,7 @@ export class RealtorRepository {
       data: {
         Properties: {
           create: propertyData
-        }                                                                              
+        }
       },
       select: {
         Properties: true
@@ -770,13 +837,19 @@ export class RealtorRepository {
 
   public async addLanguage(name:string, id: number){
 
-    const realtor = await this.prisma.realtor.findUnique({
+    const idLanguageName = await this.prisma.languageName.findUnique({
       where:{
+        name
+      }
+    })
+
+    const realtor = await this.prisma.realtor.findUnique({
+      where: {
         id
       },
-      include:{
-        RealtorLanguages:{
-          include:{
+      include: {
+        RealtorLanguages: {
+          include: {
             Language: true
           }
         }
@@ -793,7 +866,7 @@ export class RealtorRepository {
 
     if(!dbLanguage) {
 
-      const newLanguage = await this.prisma.language.create({ data:{ name }})
+      const newLanguage = await this.prisma.language.create({ data:{ name, idLanguageName:idLanguageName.id }})
 
       const realtorLanguage = await this.prisma.realtor.update({
         where:{

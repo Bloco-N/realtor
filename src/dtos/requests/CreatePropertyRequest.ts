@@ -1,4 +1,4 @@
-import { EnergyEfficience, Preservation, PropertyType } from '@prisma/client'
+import {EnergyEfficience, Preservation, PropertyType } from '@prisma/client'
 
 export interface CreatePropertyRequest {
   propertyData: {
