@@ -68,6 +68,8 @@ model Client {
   city            String?
   address         String?
   zipCode         String?
+  nif_passport    String?
+  choiceNif       Boolean   @default(true)
   verified        Boolean   @default(false)
   Sale            Sale[]
   Comment         Comment[]
