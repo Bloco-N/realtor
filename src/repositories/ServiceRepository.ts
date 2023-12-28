@@ -97,8 +97,10 @@ export class ServiceRepository {
     }
     const realtor = await this.prisma.realtor.findUnique({ where: { id }, include:{ RealtorLanguages: {include: { Language: true}}}})
 
-    const removeLanguage = new Set(realtor.RealtorLanguages.map(item => item.Language.name))
-
+    var removeLanguage = new Set();
+    if (realtor !== null){
+      removeLanguage = new Set(realtor.RealtorLanguages.map(item => item.Language.name))
+    } 
     const allLanguage = newLanguages.filter((item) => {
       return !removeLanguage.has(item)
     })
