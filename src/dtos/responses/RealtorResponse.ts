@@ -11,4 +11,6 @@ export interface RealtorResponse {
   professional_email: string | null
   website: string | null
   rating: number 
+  sold?: number | null,
+  bought?:number | null
 }

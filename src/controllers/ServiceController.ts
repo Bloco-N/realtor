@@ -80,4 +80,12 @@ export class ServiceController {
   
   }
 
+  public async listLanguageName(req: Request, res: Response){
+    const { realtorId } = req.params
+
+    const languages = await this.repository.listLanguageName(+realtorId)
+
+    res.status(200).send(languages)
+  }
+
 }

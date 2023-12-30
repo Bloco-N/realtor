@@ -7,6 +7,8 @@ export interface UpdateClientRequest {
   city?: string
   address?: string
   zipCode?: string
+  choiceNif?: boolean
+  nif_passport?: string
   user: {
     id: number
     email: string

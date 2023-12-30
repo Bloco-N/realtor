@@ -87,4 +87,30 @@ export class ServiceRepository {
   
   }
 
+  public async listLanguageName(id:number) {
+    const newLanguages = []
+
+    const languages = await this.prisma.languageName.findMany({select: {name:true}})
+
+    for(const language of languages){
+      newLanguages.push(language.name)
+    }
+    const realtor = await this.prisma.realtor.findUnique({ where: { id }, include:{ RealtorLanguages: {include: { Language: true}}}})
+
+    var removeLanguage = new Set();
+    if (realtor !== null){
+      removeLanguage = new Set(realtor.RealtorLanguages.map(item => item.Language.name))
+    } 
+    const allLanguage = newLanguages.filter((item) => {
+      return !removeLanguage.has(item)
+    })
+
+    const withoutSymbols = allLanguage.filter(lang => !/[^\w\s]/.test(lang)).sort();
+    const withSymbols = allLanguage.filter(lang => /[^\w\s]/.test(lang)).sort();
+    const sortedLanguages = [...withoutSymbols, ...withSymbols];
+
+    return sortedLanguages
+
+  }
+
 }

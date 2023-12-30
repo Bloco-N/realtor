@@ -11,6 +11,7 @@ import { MailService }                 from '../services/MailService'
 import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequest'
 import { GeoApiService }               from '../services/GeoApiService'
 import { UpdatePropertyRequestAgency } from '../dtos/requests/UpdatePropertyRequest'
+import { SingInGoogleRequest } from '../dtos/requests/SingInGoogleRequest'
 
 export class AgencyRepository {
 
@@ -132,6 +133,43 @@ export class AgencyRepository {
     if (!match) throw new ApiError(400, 'agency or password incorrect')
 
     const token = sign(agency, process.env.API_SECRET, {
+      expiresIn: '8h'
+    })
+
+    return token
+  
+  }  
+  
+  public async signInGoogle(data: SingInGoogleRequest): Promise<string> {
+
+    const { email } = data
+
+    const agencyExists = await this.prisma.agency.findUnique({
+      where: {
+        email
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true
+      }
+    })
+    if (!agencyExists) {
+      const newAgency = await this.prisma.agency.create({
+        data: {
+          ...data,
+        },
+      });
+
+      const token = sign(newAgency, process.env.API_SECRET, {
+        expiresIn: '8h',
+      });
+
+      return token;
+    }
+
+    const token = sign(agencyExists, process.env.API_SECRET, {
       expiresIn: '8h'
     })
 
