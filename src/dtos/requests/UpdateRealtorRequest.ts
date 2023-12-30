@@ -11,6 +11,7 @@ export interface UpdateRealtorRequest {
   professional_email?: string | null
   website?: string | null
   coverPicture?: string | null
+  fullCoverPicture?: string | null
   profilePicture?: string | null
   user: {
     id: number

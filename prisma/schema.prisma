@@ -81,6 +81,10 @@ model Realtor {
   password           String?
   firstName          String
   lastName           String
+  wppText            String?
+  profilePicture     String?
+  coverPicture       String?
+  fullCoverPicture       String?
   introduction       String?
   phone              String?
   whatsapp           String?
@@ -113,6 +117,12 @@ model Agency {
   email              String           @unique
   password           String?
   name               String           @unique
+  wppText            String?
+  profilePicture     String?
+  coverPicture       String?
+  fullCoverPicture   String?
+  phoneCountry       String?
+  wppCountry         String?
   description        String?
   phone              String?
   whatsapp           String?

@@ -1,6 +1,6 @@
 import {EnergyEfficience, Preservation, PropertyType } from '@prisma/client'
 
-export interface CreatePropertyRequest {
+export interface UpdatePropertyRequest {
   propertyData: {
     title: string
     link: string
@@ -14,7 +14,7 @@ export interface CreatePropertyRequest {
   realtorId: number
 }
 
-export interface CreatePropertyRequestAgency {
+export interface UpdatePropertyRequestAgency {
   propertyData: {
     title: string
     link: string

@@ -76,10 +76,12 @@ router.post('/denuncia',clientController.reportAnunce.bind(clientController))
 
 router.get('/property/realtor/:realtorId', realtorController.listAllProperties.bind(realtorController))
 router.post('/property/realtor', realtorController.addProperty.bind(realtorController))
+router.put('/property/:propertyId/realtor', realtorController.updateProperty.bind(realtorController))
 router.delete('/property/realtor/:propertyId', auth.realtorAuth, realtorController.removeProperty.bind(realtorController))
 
 router.get('/property/agency/:agencyId', agencyController.listAllProperties.bind(agencyController))
 router.post('/property/agency', agencyController.addProperty.bind(agencyController))
+router.put('/property/:propertyId/agency', agencyController.updateProperty.bind(agencyController))
 router.delete('/property/agency/:propertyId', auth.realtorAuth, agencyController.removeProperty.bind(agencyController))
 
 router.get('/award/realtor/:realtorId', realtorController.listAllAwards.bind(realtorController))
