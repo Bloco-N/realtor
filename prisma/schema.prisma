@@ -91,13 +91,10 @@ model Realtor {
   instagram          String?
   professional_email String?
   website            String?
-  profilePicture     String?
   facebook           String?
   expTime            Int?
-  coverPicture       String?
   phoneCountry       String?
   wppCountry         String?
-  wppText            String?
   verified           Boolean           @default(false)
   Awards             Award[]
   Comments           Comment[]
@@ -131,11 +128,6 @@ model Agency {
   website            String?
   addressId          Int?
   facebook           String?
-  coverPicture       String?
-  profilePicture     String?
-  phoneCountry       String?
-  wppCountry         String?
-  wppText            String?
   verified           Boolean          @default(false)
   address            String?
   AgencyServices     AgencyService[]
