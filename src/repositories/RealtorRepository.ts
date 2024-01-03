@@ -660,7 +660,8 @@ export class RealtorRepository {
         
         }),
         name: agenciePartnerships[0].agency,
-        pic: agenciePartnerships[0].Agency?.profilePicture ? agenciePartnerships[0].Agency.profilePicture : null
+        pic: agenciePartnerships[0].Agency?.profilePicture ? agenciePartnerships[0].Agency.profilePicture : null,
+        agencyId: agenciePartnerships[0].agencyId
 
       }
     
