@@ -309,8 +309,12 @@ export class AgencyRepository {
         id
       },
       select: {
-        Properties: true
-      }
+        Properties: {
+          orderBy: {
+            createdAt: 'asc'
+          }
+        },
+      },
     })
 
     return Properties
