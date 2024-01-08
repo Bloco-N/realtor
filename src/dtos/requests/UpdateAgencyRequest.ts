@@ -3,6 +3,7 @@ export interface UpdateAgencyRequest {
   name?: string
   description?: string
   phone?: string
+  expTime?: number | null
   whatsapp?: string
   instagram?: string
   twitter?: string
