@@ -121,6 +121,7 @@ model Agency {
   website            String?
   addressId          Int?
   facebook           String?
+  expTime            Int?
   coverPicture       String?
   profilePicture     String?
   phoneCountry       String?

@@ -23,6 +23,7 @@ export class AgencyRepository {
     name: true,
     description: true,
     phone: true,
+    expTime: true,
     whatsapp: true,
     instagram: true,
     professional_email: true,
