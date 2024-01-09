@@ -55,22 +55,22 @@ enum Preservation {
 }
 
 model Client {
-  id              Int       @id @default(autoincrement())
-  email           String    @unique
-  password        String?
-  firstName       String
-  lastName        String
-  phone           String?
-  country         String?
-  city            String?
-  address         String?
-  zipCode         String?
-  nif_passport    String?
-  choiceNif       Boolean   @default(true)
-  verified        Boolean   @default(false)
-  Sale            Sale[]
-  Comment         Comment[]
-  CommentAgency   CommentAgency[]
+  id            Int             @id @default(autoincrement())
+  email         String          @unique
+  password      String?
+  firstName     String
+  lastName      String
+  phone         String?
+  country       String?
+  city          String?
+  address       String?
+  zipCode       String?
+  nif_passport  String?
+  choiceNif     Boolean         @default(true)
+  verified      Boolean         @default(false)
+  Sale          Sale[]
+  Comment       Comment[]
+  CommentAgency CommentAgency[]
 
   @@map("clients")
 }
@@ -84,7 +84,7 @@ model Realtor {
   wppText            String?
   profilePicture     String?
   coverPicture       String?
-  fullCoverPicture       String?
+  fullCoverPicture   String?
   introduction       String?
   phone              String?
   whatsapp           String?
@@ -131,7 +131,7 @@ model Agency {
   verified           Boolean          @default(false)
   address            String?
   AgencyServices     AgencyService[]
-  Address            Address?         @relation(fields: [addressId], references: [id])
+  Address            Address?         @relation(fields: [addressId], references: [id], onDelete: Cascade)
   AgencyCities       AgencyCity[]
   AgencyLanguages    AgencyLanguage[]
   Comments           CommentAgency[]
@@ -155,7 +155,7 @@ model RealtorService {
   realtorId Int
   serviceId Int
   Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
-  Service   Service @relation(fields: [serviceId], references: [id])
+  Service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@map("realtor_services")
 }
@@ -164,8 +164,8 @@ model AgencyService {
   id        Int     @id @default(autoincrement())
   agencyId  Int
   serviceId Int
-  Agency    Agency  @relation(fields: [agencyId], references: [id])
-  Service   Service @relation(fields: [serviceId], references: [id])
+  Agency    Agency  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@map("agencie_services")
 }
@@ -185,7 +185,7 @@ model Language {
   name             String            @unique
   idLanguageName   Int?
   AgencyLanguages  AgencyLanguage[]
-  languageName     LanguageName?     @relation(fields: [idLanguageName], references: [id])
+  languageName     LanguageName?     @relation(fields: [idLanguageName], references: [id], onDelete: Cascade)
   RealtorLanguages RealtorLanguage[]
 
   @@map("languages")
@@ -213,7 +213,7 @@ model Sale {
   realtorId Int
   clientId  Int
   confirmed Boolean @default(false)
-  Client    Client  @relation(fields: [clientId], references: [id])
+  Client    Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("sales")
@@ -232,7 +232,7 @@ model Comment {
   responsivenessRating                 Float
   profissionalismAndComunicationRating Float
   reply                                String?
-  Client                               Client    @relation(fields: [clientId], references: [id])
+  Client                               Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
   Realtor                              Realtor   @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("comments")
@@ -247,8 +247,8 @@ model CommentAgency {
   responsivenessRating                 Float
   negotiationSkillsRating              Float
   profissionalismAndComunicationRating Float
-  Agency                               Agency @relation(fields: [agencyId], references: [id])
-  Client                               Client @relation(fields: [clientId], references: [id])
+  Agency                               Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Client                               Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@map("comments_agency")
 }
@@ -271,7 +271,7 @@ model Partnership {
   agencyId  Int?
   agency    String
   title     String
-  Agency    Agency?   @relation(fields: [agencyId], references: [id])
+  Agency    Agency?   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   Realtor   Realtor   @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("partnerships")
@@ -293,7 +293,7 @@ model Property {
   rooms            Rooms?
   updatedAt        DateTime         @updatedAt
   usefulArea       String?
-  Agency           Agency?          @relation(fields: [agencyId], references: [id])
+  Agency           Agency?          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   Realtor          Realtor?         @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("properties")
@@ -306,7 +306,7 @@ model Address {
   cityId     Int
   state      String
   complement String
-  City       City     @relation(fields: [cityId], references: [id])
+  City       City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
   Agency     Agency[]
 
   @@map("adresses")
@@ -316,7 +316,7 @@ model RealtorCity {
   id        Int     @id @default(autoincrement())
   cityId    Int
   realtorId Int
-  City      City    @relation(fields: [cityId], references: [id])
+  City      City    @relation(fields: [cityId], references: [id], onDelete: Cascade)
   Realtor   Realtor @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("realtor_cities")
@@ -326,8 +326,8 @@ model AgencyCity {
   id       Int    @id @default(autoincrement())
   cityId   Int
   agencyId Int
-  Agency   Agency @relation(fields: [agencyId], references: [id])
-  City     City   @relation(fields: [cityId], references: [id])
+  Agency   Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  City     City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
 
   @@map("agency_cities")
 }
@@ -336,7 +336,7 @@ model RealtorLanguage {
   id         Int      @id @default(autoincrement())
   realtorId  Int
   languageId Int
-  Language   Language @relation(fields: [languageId], references: [id])
+  Language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
   Realtor    Realtor  @relation(fields: [realtorId], references: [id], onDelete: Cascade)
 
   @@map("realtor_languages")
@@ -346,8 +346,8 @@ model AgencyLanguage {
   id         Int      @id @default(autoincrement())
   agencyId   Int
   languageId Int
-  Agency     Agency   @relation(fields: [agencyId], references: [id])
-  Language   Language @relation(fields: [languageId], references: [id])
+  Agency     Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
   @@map("agency_languages")
 }
