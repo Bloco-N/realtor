@@ -269,7 +269,7 @@ model Partnership {
   active    Boolean   @default(false)
   realtorId Int
   agencyId  Int?
-  agency    String
+  agency    String    @unique
   title     String
   Agency    Agency?   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   Realtor   Realtor   @relation(fields: [realtorId], references: [id], onDelete: Cascade)

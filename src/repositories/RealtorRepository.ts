@@ -75,7 +75,7 @@ export class RealtorRepository {
       : undefined 
 
   public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<RealtorResponse>> {
-
+    console.log(search)
     const where = this.where(search)
 
     const totalOfRealtors = await this.prisma.realtor.count({ where })
@@ -676,7 +676,7 @@ export class RealtorRepository {
   public async addPartnership(data: CreatePartnershipRequest) {
 
     const { realtorId, ...partnerShipData } = data
-
+    
     const agency = await this.prisma.agency.findUnique({
       where: {
         name: partnerShipData.agency

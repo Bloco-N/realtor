@@ -12,10 +12,13 @@ import { CreatePropertyRequestAgency } from '../dtos/requests/CreatePropertyRequ
 import { GeoApiService }               from '../services/GeoApiService'
 import { UpdatePropertyRequestAgency } from '../dtos/requests/UpdatePropertyRequest'
 import { SingInGoogleRequest } from '../dtos/requests/SingInGoogleRequest'
+import { timeSince } from '../utils/timeSince'
+import { RealtorRepository } from './RealtorRepository'
 
 export class AgencyRepository {
 
   prisma = new PrismaClient()
+  realtor = new RealtorRepository()
   private mailService = new MailService()
   private geoApiService = new GeoApiService()
   private select = {
@@ -181,6 +184,13 @@ export class AgencyRepository {
 
     const { password, ...agencyData } = data
 
+    const partnershipAgencyExist = await this.prisma.partnership.findMany({
+      where:{
+        agency: agencyData.name
+      }
+    })
+    console.log(partnershipAgencyExist)
+
     const agencyExists = await this.prisma.agency.findUnique({
       where: {
         email: agencyData.email
@@ -198,8 +208,19 @@ export class AgencyRepository {
       }
     })
 
+    if(partnershipAgencyExist.length > 0){
+      await this.prisma.partnership.updateMany({
+        where:{
+          agency: agencyData.name
+        },
+        data:{
+            agencyId: agency.id
+        }
+      })
+    }
+
     if (agency) return 'created'
-  
+
   }
 
   public async update(data: UpdateAgencyRequest): Promise<string> {
@@ -608,6 +629,77 @@ export class AgencyRepository {
 
     if (agencyLanguages) return 'deleted'
 
+  }
+
+  public async findAllPartnershipsAgency(id: number) {
+    const { Partnerships } = await this.prisma.agency.findUnique({
+      where: { id },
+      select: {
+        Partnerships: {
+          include:{
+            Realtor: true
+          }
+        }
+      },
+    })
+
+    const agencies = Partnerships.map((partnership) => partnership.agency)
+
+    const uniqueAgencies = [...new Set(agencies)]
+
+    const agenciesPartnerships = uniqueAgencies.map((agency) => Partnerships.filter((partnership) => partnership.agency === agency))
+
+    return agenciesPartnerships.map((agenciePartnerships) => {
+
+      return{
+        list: agenciePartnerships.map((partnership) => {
+
+          const initDatePt = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
+          const endDatePt = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
+
+          const initDateEn = partnership.init.toLocaleString('en', { month: 'short', year: 'numeric'})
+          const endDateEn = partnership.end ? partnership.end.toLocaleString('en', { month: 'short', year:'numeric' }) : 'present'
+
+          const initDateEs = partnership.init.toLocaleString('es', { month: 'short', year: 'numeric'})
+          const endDateEs = partnership.end ? partnership.end.toLocaleString('es', { month: 'short', year:'numeric'}) : 'hasta el momento'
+  
+          let periodPt = ''
+          let periodEn = ''
+          let periodEs = ''
+          periodPt = timeSince('pt', partnership.init)
+          periodEn = timeSince('en', partnership.init)
+          periodEs = timeSince('es', partnership.init)
+          if(partnership.end){
+  
+            periodPt = timeSince('pt', partnership.init, partnership.end)
+            periodEn = timeSince('en', partnership.init, partnership.end)
+            periodEs = timeSince('es', partnership.init, partnership.end)
+          
+          }
+          const workTimePt = `${initDatePt} - ${endDatePt} - ${periodPt}`
+          const workTimeEn = `${initDateEn} - ${endDateEn} - ${periodEn}`
+          const workTimeEs = `${initDateEs} - ${endDateEs} - ${periodEs}`
+  
+          return {
+            id: partnership.id,
+            title: partnership.title,
+            agency: partnership.agency,
+            idRealtor: partnership.realtorId,
+            nameRealtor: `${partnership?.Realtor.firstName} ${partnership?.Realtor.lastName}`,
+            workTime: {
+              pt: workTimePt,
+              en: workTimeEn,
+              es: workTimeEs
+            },
+            pic: partnership.Realtor?.profilePicture ? partnership.Realtor.profilePicture : null,
+          }
+        
+        }),
+
+      }
+    
+    })
+  
   }
 
 }

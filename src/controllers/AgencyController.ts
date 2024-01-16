@@ -50,6 +50,24 @@ export class AgencyController {
   
   }
 
+  public async listAllPartnership(req: Request, res: Response) {
+
+    try {
+
+      const { agencyId } = req.params
+
+      const partnerships = await this.repository.findAllPartnershipsAgency(Number(agencyId))
+
+      res.status(200).send(partnerships)
+    
+    } catch (error) {
+
+      errorHandling(res, error)
+    
+    }
+  
+  }
+
   public async signIn(req: Request, res: Response) {
 
     try {

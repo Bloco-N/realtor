@@ -404,6 +404,7 @@ export class RealtorController {
 
       const { realtorId } = req.params
       const partnerships = await this.repository.findAllPartnerships(Number(realtorId))
+      // console.log(partnerships)
 
       res.status(200).send(partnerships)
     
