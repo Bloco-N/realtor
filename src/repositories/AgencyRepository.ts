@@ -189,7 +189,6 @@ export class AgencyRepository {
         agency: agencyData.name
       }
     })
-    console.log(partnershipAgencyExist)
 
     const agencyExists = await this.prisma.agency.findUnique({
       where: {
@@ -637,7 +636,7 @@ export class AgencyRepository {
       select: {
         Partnerships: {
           include:{
-            Realtor: true
+            Realtor: true,
           }
         }
       },
@@ -654,46 +653,47 @@ export class AgencyRepository {
       return{
         list: agenciePartnerships.map((partnership) => {
 
-          const initDatePt = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
-          const endDatePt = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
-
-          const initDateEn = partnership.init.toLocaleString('en', { month: 'short', year: 'numeric'})
-          const endDateEn = partnership.end ? partnership.end.toLocaleString('en', { month: 'short', year:'numeric' }) : 'present'
-
-          const initDateEs = partnership.init.toLocaleString('es', { month: 'short', year: 'numeric'})
-          const endDateEs = partnership.end ? partnership.end.toLocaleString('es', { month: 'short', year:'numeric'}) : 'hasta el momento'
+          if(!partnership.end){
+            const initDatePt = partnership.init.toLocaleString('pt-BR', { month: 'short', year: 'numeric' })
+            const endDatePt = partnership.end ? partnership.end.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }) : 'até o momento'
   
-          let periodPt = ''
-          let periodEn = ''
-          let periodEs = ''
-          periodPt = timeSince('pt', partnership.init)
-          periodEn = timeSince('en', partnership.init)
-          periodEs = timeSince('es', partnership.init)
-          if(partnership.end){
+            const initDateEn = partnership.init.toLocaleString('en', { month: 'short', year: 'numeric'})
+            const endDateEn = partnership.end ? partnership.end.toLocaleString('en', { month: 'short', year:'numeric' }) : 'present'
   
-            periodPt = timeSince('pt', partnership.init, partnership.end)
-            periodEn = timeSince('en', partnership.init, partnership.end)
-            periodEs = timeSince('es', partnership.init, partnership.end)
-          
+            const initDateEs = partnership.init.toLocaleString('es', { month: 'short', year: 'numeric'})
+            const endDateEs = partnership.end ? partnership.end.toLocaleString('es', { month: 'short', year:'numeric'}) : 'hasta el momento'
+    
+            let periodPt = ''
+            let periodEn = ''
+            let periodEs = ''
+            periodPt = timeSince('pt', partnership.init)
+            periodEn = timeSince('en', partnership.init)
+            periodEs = timeSince('es', partnership.init)
+            if(partnership.end){
+    
+              periodPt = timeSince('pt', partnership.init, partnership.end)
+              periodEn = timeSince('en', partnership.init, partnership.end)
+              periodEs = timeSince('es', partnership.init, partnership.end)
+            
+            }
+            const workTimePt = `${initDatePt} - ${endDatePt} - ${periodPt}`
+            const workTimeEn = `${initDateEn} - ${endDateEn} - ${periodEn}`
+            const workTimeEs = `${initDateEs} - ${endDateEs} - ${periodEs}`
+    
+            return {
+              id: partnership.id,
+              title: partnership.title,
+              agency: partnership.agency,
+              idRealtor: partnership.realtorId,
+              nameRealtor: `${partnership?.Realtor.firstName} ${partnership?.Realtor.lastName}`,
+              workTime: {
+                pt: workTimePt,
+                en: workTimeEn,
+                es: workTimeEs
+              },
+              pic: partnership.Realtor?.profilePicture ? partnership.Realtor.profilePicture : null,
+            }
           }
-          const workTimePt = `${initDatePt} - ${endDatePt} - ${periodPt}`
-          const workTimeEn = `${initDateEn} - ${endDateEn} - ${periodEn}`
-          const workTimeEs = `${initDateEs} - ${endDateEs} - ${periodEs}`
-  
-          return {
-            id: partnership.id,
-            title: partnership.title,
-            agency: partnership.agency,
-            idRealtor: partnership.realtorId,
-            nameRealtor: `${partnership?.Realtor.firstName} ${partnership?.Realtor.lastName}`,
-            workTime: {
-              pt: workTimePt,
-              en: workTimeEn,
-              es: workTimeEs
-            },
-            pic: partnership.Realtor?.profilePicture ? partnership.Realtor.profilePicture : null,
-          }
-        
         }),
 
       }
