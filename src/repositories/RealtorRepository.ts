@@ -375,7 +375,7 @@ export class RealtorRepository {
       select: {
         Properties: {
           orderBy: {
-            createdAt: 'asc'
+            updatedAt: 'desc'
           }
         }
       }

@@ -190,13 +190,27 @@ export class AgencyRepository {
       }
     })
 
-    const agencyExists = await this.prisma.agency.findUnique({
+    const agencyExists = await this.prisma.agency.findFirst({
       where: {
-        email: agencyData.email
+        OR: [
+          { email: agencyData.email },
+          { name: agencyData.name }
+        ]
       }
     })
 
-    if (agencyExists) throw new ApiError(400, 'agency already exists')
+    console.log(agencyExists, "Pedro")
+
+    if (agencyExists) {
+      if (agencyExists.email === agencyData.email) {
+        throw new ApiError(400, 'email');
+      } else if (agencyExists.name === agencyData.name) {
+        throw new ApiError(400, 'name');
+      } else {
+        throw new ApiError(400, 'email_and_name');
+      }
+    }
+    
 
     const hashed = await hash(password, 10)
 
@@ -331,7 +345,7 @@ export class AgencyRepository {
       select: {
         Properties: {
           orderBy: {
-            createdAt: 'asc'
+            updatedAt: 'desc'
           }
         },
       },
