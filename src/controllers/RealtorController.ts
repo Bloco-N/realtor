@@ -32,10 +32,10 @@ export class RealtorController {
       }
 
       const {
-        query: { search, page, offset }
+        query: { search, zipCode , page, offset }
       } = req
-
-      const realtors = await this.repository.findAll(search ? String(search) : '', page ? Number(page) : 1, offset ? Number(offset) : 10)
+      console.log(search, zipCode , page, offset , "PEdroooo")
+      const realtors = await this.repository.findAll(search ? String(search) : '', page ? Number(page) : 1, offset ? Number(offset) : 10, zipCode)
 
       res.status(200).send(realtors)
     

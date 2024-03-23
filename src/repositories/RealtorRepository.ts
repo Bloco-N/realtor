@@ -44,37 +44,74 @@ export class RealtorRepository {
     wppCountry: true,
     wppText: true
   }
-  private where = (search: string): Prisma.RealtorWhereInput =>
-    search
-      ? {
-          OR: [
-            {
-              firstName: {
-                contains: search.split(' ')[0],
-                mode: 'insensitive'
+  private where = (search: string, zipCode: string): Prisma.RealtorWhereInput => {
+    if (search && zipCode) {
+      return {
+        AND: [
+          {
+            OR: [
+              {
+                firstName: {
+                  contains: search.split(' ')[0],
+                  mode: 'insensitive'
+                }
+              },
+              {
+                lastName: {
+                  contains: search.split(' ')[search.split(' ').length - 1],
+                  mode: 'insensitive'
+                }
               }
-            },
-            {
-              lastName: {
-                contains: search.split(' ')[search.split(' ').length - 1],
-                mode: 'insensitive'
-              }
-            },
-            {
-              RealtorCities: {
-                some: {
-                  City: {
-                    name: search
-                  }
+            ]
+          },
+          {
+            RealtorCities: {
+              some: {
+                City: {
+                  name: zipCode
                 }
               }
             }
-          ]
+          }
+        ]
+      };
+    } else if (search) {
+      return {
+        OR: [
+          {
+            firstName: {
+              contains: search.split(' ')[0],
+              mode: 'insensitive'
+            }
+          },
+          {
+            lastName: {
+              contains: search.split(' ')[search.split(' ').length - 1],
+              mode: 'insensitive'
+            }
+          }
+        ]
+      };
+    } else if (zipCode) {
+      return {
+        RealtorCities: {
+          some: {
+            City: {
+              name: zipCode
+            }
+          }
         }
-      : undefined
+      };
+    } else {
+      return undefined;
+    }
+  }
+  
 
-  public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<RealtorResponse>> {
-    const where = this.where(search)
+  public async findAll(search: string, page: number, take: number, zipCode:string): Promise<PaginationResponse<RealtorResponse>> {
+    console.log(search, "AAAAAA")
+    const where = this.where(search, zipCode)
+    console.log(zipCode, "Realtor")
 
     const totalOfRealtors = await this.prisma.realtor.count({ where })
 
@@ -101,7 +138,6 @@ export class RealtorRepository {
         }
       }
     })
-
     const realtorsWithRating = realtors.map((realtor) => {
       let rating = 0
 

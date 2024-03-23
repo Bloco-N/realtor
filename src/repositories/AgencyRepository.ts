@@ -199,8 +199,6 @@ export class AgencyRepository {
       }
     })
 
-    console.log(agencyExists, "Pedro")
-
     if (agencyExists) {
       if (agencyExists.email === agencyData.email) {
         throw new ApiError(400, 'email');

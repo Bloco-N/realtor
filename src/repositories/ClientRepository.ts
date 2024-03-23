@@ -49,6 +49,7 @@ export class ClientRepository {
   public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<ClientResponse>> {
 
     const where = this.where(search)
+    console.log(where)
 
     const totalOfClients = await this.prisma.client.count({ where })
 
