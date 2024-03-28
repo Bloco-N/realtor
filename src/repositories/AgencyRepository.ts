@@ -40,19 +40,60 @@ export class AgencyRepository {
     verified: true
   }
 
-  private where = (search: string): Prisma.AgencyWhereInput =>
-    search
-      ? {
-        name: {
-          contains: search,
-          mode: 'insensitive'
+      private where = (search: string, zipCode: string): Prisma.AgencyWhereInput => {
+        if (search && zipCode) {
+          return {
+            AND: [
+              {
+                OR: [
+                  {
+                    name: {
+                      contains: search,
+                      mode: 'insensitive'
+                    }
+                  },
+                ]
+              },
+              {
+                AgencyCities: {
+                  some: {
+                    City: {
+                      name: zipCode
+                    }
+                  }
+                }
+              }
+            ]
+          };
+        } else if (search) {
+          return {
+            OR: [
+              {
+                name: {
+                  contains: search.split(' ')[0],
+                  mode: 'insensitive'
+                }
+              },
+            ]
+          };
+        } else if (zipCode) {
+          return {
+            AgencyCities: {
+              some: {
+                City: {
+                  name: zipCode
+                }
+              }
+            }
+          };
+        } else {
+          return undefined;
         }
       }
-      : undefined
 
-  public async findAll(search: string, page: number, take: number): Promise<PaginationResponse<AgencyResponse>> {
+  public async findAll(search: string, page: number, take: number, zipCode:string): Promise<PaginationResponse<AgencyResponse>> {
 
-    const where = this.where(search)
+    const where = this.where(search, zipCode)
 
     const totalOfAgencies = await this.prisma.agency.count({ where })
 
@@ -60,10 +101,62 @@ export class AgencyRepository {
       skip: take * (page - 1),
       take,
       where,
-      select: this.select
+      include: {
+        Comments: true,
+        Partnerships: {
+          include: {
+            Agency: true
+          }
+        },
+        AgencyCities: {
+          include: {
+            City: true
+          }
+        },
+        AgencyLanguages: {
+          include: {
+            Language: true
+          }
+        }
+      }
     })
 
-    return new PaginationResponse<AgencyResponse>(agencies, page, Math.ceil(totalOfAgencies / take))
+    const realtorsWithRating = agencies.map((realtor) => {
+      let rating = 0
+
+      if (realtor.Comments.length > 0) {
+        rating =
+          realtor.Comments.map((comment) => {
+            return (
+              (comment.marketExpertiseRating +
+                comment.negotiationSkillsRating +
+                comment.profissionalismAndComunicationRating +
+                comment.responsivenessRating) /
+              4
+            )
+          }).reduce((a, b) => a + b) / realtor.Comments.length
+      }
+
+      return {
+        ...realtor,
+        rating
+      }
+    })
+    console.log("PEdroooooo")
+    const realtorsWithLastExp = await Promise.all(
+      realtorsWithRating.map(async (realtor) => {
+        const partnerships = await this.findAllPartnershipsAgency(realtor.id)
+        console.log(partnerships, "Pedro")
+        return {
+          ...realtor,
+          agencyName: partnerships[0]?.nameRealtor ? partnerships[0].nameRealtor : null,
+          agencyPic: partnerships[0]?.pic ? partnerships[0].pic : null
+        }
+      })
+    )
+
+
+    return new PaginationResponse<AgencyResponse>(realtorsWithLastExp, page, Math.ceil(totalOfAgencies / take))
   
   }
 
