@@ -149,8 +149,8 @@ export class AgencyRepository {
         console.log(partnerships, "Pedro")
         return {
           ...realtor,
-          agencyName: partnerships[0]?.nameRealtor ? partnerships[0].nameRealtor : null,
-          agencyPic: partnerships[0]?.pic ? partnerships[0].pic : null
+          agencyName: partnerships[0]?.list[0]?.nameRealtor ? partnerships[0].list[0].nameRealtor : null,
+          agencyPic: partnerships[0]?.list[0].pic ? partnerships[0].list[0].pic : null
         }
       })
     )
